@@ -3,7 +3,20 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(cp:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npx create-next-app@latest emeraldai --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --use-npm --eslint --no-turbopack)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npm run build:*)",
+      "Bash(git config:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: EmeraldAI - AI-Powered SEO Blog Generator\n\n- Set up Next.js 16 with TypeScript and App Router\n- Implemented Grok (xAI) integration for article generation\n- Added user authentication with NextAuth.js\n- Created Prisma database schema (SQLite)\n- Built article generation form with humanization levels\n- Implemented dashboard for article management\n- Added export functionality (Markdown/HTML)\n- Configured PWA support with next-pwa\n- Styled with Tailwind CSS\n- Included comprehensive README and SETUP guide\n\nFeatures:\n- AI-powered blog generation (1200-1850 words)\n- SEO optimization with keyword integration\n- Three humanization levels (low, medium, enhanced)\n- E-E-A-T compliance\n- Article analytics and scoring\n- Progressive Web App capabilities\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(openssl rand:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": []
   }
