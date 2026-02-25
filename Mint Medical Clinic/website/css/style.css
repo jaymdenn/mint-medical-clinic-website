@@ -382,6 +382,144 @@ ul {
     box-shadow: 0 24px 48px rgba(62, 180, 137, 0.15), 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* ===== KSL Offer Bubble ===== */
+.hero-image-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.hero-image-wrapper .hero-image {
+    flex: 1;
+    min-width: 0;
+}
+
+.ksl-offer-bubble {
+    position: relative;
+    width: 280px;
+    flex-shrink: 0;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fdfb 100%);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(62, 180, 137, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 2px solid var(--mint);
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 8px 32px rgba(62, 180, 137, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    50% {
+        box-shadow: 0 8px 40px rgba(62, 180, 137, 0.35), 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.ksl-offer-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.ksl-logo {
+    height: 36px;
+    width: auto;
+}
+
+.ksl-exclusive {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--white);
+    background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.ksl-offer-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 14px;
+    line-height: 1.2;
+}
+
+.ksl-offer-freebies {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.ksl-freebie {
+    font-size: 13px;
+    color: var(--gray-700);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.ksl-urgency {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    border: 1px solid #ffc107;
+}
+
+.ksl-urgency-icon {
+    font-size: 16px;
+}
+
+.ksl-urgency span {
+    font-size: 12px;
+    color: #856404;
+    font-weight: 500;
+}
+
+.ksl-urgency strong {
+    color: #d63384;
+    font-weight: 700;
+}
+
+.ksl-cta-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(135deg, var(--mint) 0%, var(--mint-dark) 100%);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 14px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(62, 180, 137, 0.3);
+    margin-bottom: 16px;
+}
+
+.ksl-cta-btn:hover {
+    background: linear-gradient(135deg, var(--mint-dark) 0%, var(--soft-teal) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(62, 180, 137, 0.4);
+}
+
+.ksl-product-image {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    border-radius: 8px;
+}
+
 /* ===== Featured In ===== */
 .featured-in {
     padding: 48px 0;
@@ -1251,6 +1389,16 @@ ul {
         height: 400px;
     }
 
+    .hero-image-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ksl-offer-bubble {
+        width: 100%;
+        max-width: 400px;
+    }
+
     .services-grid {
         grid-template-columns: 1fr;
     }
@@ -1468,6 +1616,44 @@ ul {
     .hero-image img {
         height: 280px;
         border-radius: 12px;
+    }
+
+    .ksl-offer-bubble {
+        padding: 16px;
+    }
+
+    .ksl-logo {
+        height: 28px;
+    }
+
+    .ksl-exclusive {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+
+    .ksl-offer-title {
+        font-size: 16px;
+    }
+
+    .ksl-freebie {
+        font-size: 12px;
+    }
+
+    .ksl-urgency {
+        padding: 8px 10px;
+    }
+
+    .ksl-urgency span {
+        font-size: 11px;
+    }
+
+    .ksl-cta-btn {
+        font-size: 13px;
+        padding: 12px 14px;
+    }
+
+    .ksl-product-image {
+        max-width: 140px;
     }
 
     /* Featured In */
