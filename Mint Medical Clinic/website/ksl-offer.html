@@ -1085,15 +1085,32 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
+            const submitBtn = this.querySelector('.submit-btn');
 
-            // Store lead info (you can send this to your CRM)
-            console.log('Lead captured:', { name, email, phone });
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
 
-            // Redirect to booking page
-            window.open('https://new-consultation.zohobookings.com/#/mintmedicalclinic', '_blank');
-
-            // Show success message
-            alert('Thank you! Your information has been received. A booking page will open in a new tab to schedule your consultation.');
+            // Send to Zapier webhook
+            fetch('https://hooks.zapier.com/hooks/catch/10471566/u0u849x/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    source: 'KSL Offer Landing Page',
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(response => {
+                // Redirect to booking page
+                window.location.href = 'https://new-consultation.zohobookings.com/#/mintmedicalclinic';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Still redirect even if webhook fails
+                window.location.href = 'https://new-consultation.zohobookings.com/#/mintmedicalclinic';
+            });
         });
     </script>
 </body>
