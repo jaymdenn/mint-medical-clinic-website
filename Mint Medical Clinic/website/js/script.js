@@ -234,6 +234,41 @@ document.addEventListener('DOMContentLoaded', function() {
         lazyImages.forEach(img => imageObserver.observe(img));
     }
 
+    // ===== KSL Offer Popup Toggle =====
+    const kslPopup = document.getElementById('kslOfferPopup');
+    const kslMinimizeBtn = document.getElementById('kslMinimizeBtn');
+    const kslMinimizedTab = document.getElementById('kslMinimizedTab');
+
+    if (kslPopup && kslMinimizeBtn && kslMinimizedTab) {
+        // Minimize popup
+        kslMinimizeBtn.addEventListener('click', function() {
+            kslPopup.classList.add('minimized');
+            kslMinimizedTab.classList.add('visible');
+        });
+
+        // Expand popup from minimized tab
+        kslMinimizedTab.addEventListener('click', function() {
+            kslPopup.classList.remove('minimized');
+            kslMinimizedTab.classList.remove('visible');
+        });
+
+        // Check if user has previously minimized (persist across page loads)
+        if (sessionStorage.getItem('kslOfferMinimized') === 'true') {
+            kslPopup.classList.add('minimized');
+            kslMinimizedTab.classList.add('visible');
+        }
+
+        // Save state when minimizing
+        kslMinimizeBtn.addEventListener('click', function() {
+            sessionStorage.setItem('kslOfferMinimized', 'true');
+        });
+
+        // Clear state when expanding
+        kslMinimizedTab.addEventListener('click', function() {
+            sessionStorage.removeItem('kslOfferMinimized');
+        });
+    }
+
 });
 
 // ===== Add CSS for animations =====

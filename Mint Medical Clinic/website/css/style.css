@@ -382,37 +382,113 @@ ul {
     box-shadow: 0 24px 48px rgba(62, 180, 137, 0.15), 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* ===== KSL Offer Bubble ===== */
-.hero-image-wrapper {
-    position: relative;
-}
-
-.hero-image-wrapper .hero-image {
-    width: 100%;
-}
-
-.ksl-offer-bubble {
-    position: absolute;
-    top: 50%;
-    right: -60px;
-    transform: translateY(-50%);
-    width: 280px;
+/* ===== KSL Offer Popup ===== */
+.ksl-offer-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
     background: linear-gradient(145deg, #ffffff 0%, #f8fdfb 100%);
     border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 8px 32px rgba(62, 180, 137, 0.2);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2), 0 8px 32px rgba(62, 180, 137, 0.25);
     border: 2px solid var(--mint);
-    animation: pulse-glow 2s ease-in-out infinite;
+    z-index: 9999;
+    animation: popup-pulse 2s ease-in-out infinite;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.ksl-offer-popup.minimized {
+    transform: translateY(100%) scale(0.8);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ksl-offer-content {
+    padding: 20px;
+    padding-top: 12px;
+}
+
+@keyframes popup-pulse {
+    0%, 100% {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2), 0 8px 32px rgba(62, 180, 137, 0.25);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 16px 50px rgba(0, 0, 0, 0.25), 0 12px 40px rgba(62, 180, 137, 0.4);
+        transform: scale(1.02);
+    }
+}
+
+.ksl-minimize-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: var(--gray-100);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
     z-index: 10;
 }
 
-@keyframes pulse-glow {
+.ksl-minimize-btn:hover {
+    background: var(--gray-200);
+}
+
+.minimize-icon {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-600);
+    line-height: 1;
+}
+
+/* Minimized Tab */
+.ksl-minimized-tab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, var(--mint) 0%, var(--mint-dark) 100%);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(62, 180, 137, 0.4);
+    z-index: 9999;
+    transition: all 0.3s ease;
+    animation: tab-pulse 2s ease-in-out infinite;
+}
+
+.ksl-minimized-tab.visible {
+    display: flex;
+}
+
+.ksl-minimized-tab:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 32px rgba(62, 180, 137, 0.5);
+}
+
+@keyframes tab-pulse {
     0%, 100% {
-        box-shadow: 0 8px 32px rgba(62, 180, 137, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 6px 24px rgba(62, 180, 137, 0.4);
     }
     50% {
-        box-shadow: 0 8px 40px rgba(62, 180, 137, 0.35), 0 4px 16px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 8px 32px rgba(62, 180, 137, 0.6), 0 0 20px rgba(62, 180, 137, 0.3);
     }
+}
+
+.ksl-tab-icon {
+    font-size: 18px;
 }
 
 .ksl-offer-header {
@@ -508,6 +584,7 @@ ul {
     background: linear-gradient(135deg, var(--mint-dark) 0%, var(--soft-teal) 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(62, 180, 137, 0.4);
+    color: var(--white);
 }
 
 .ksl-product-image {
@@ -517,6 +594,44 @@ ul {
     margin: 0 auto;
     display: block;
     border-radius: 8px;
+}
+
+/* KSL Popup Mobile Styles */
+@media (max-width: 480px) {
+    .ksl-offer-popup {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+    }
+
+    .ksl-offer-content {
+        padding: 16px;
+        padding-top: 10px;
+    }
+
+    .ksl-logo {
+        height: 28px;
+    }
+
+    .ksl-offer-title {
+        font-size: 16px;
+    }
+
+    .ksl-freebie {
+        font-size: 12px;
+    }
+
+    .ksl-product-image {
+        max-width: 140px;
+    }
+
+    .ksl-minimized-tab {
+        bottom: 10px;
+        right: 10px;
+        padding: 12px 16px;
+        font-size: 13px;
+    }
 }
 
 /* ===== Featured In ===== */
@@ -1388,15 +1503,6 @@ ul {
         height: 400px;
     }
 
-    .ksl-offer-bubble {
-        position: absolute;
-        top: auto;
-        bottom: -30px;
-        right: -20px;
-        transform: none;
-        width: 260px;
-    }
-
     .services-grid {
         grid-template-columns: 1fr;
     }
@@ -1614,56 +1720,6 @@ ul {
     .hero-image img {
         height: 280px;
         border-radius: 12px;
-    }
-
-    .hero-image-wrapper {
-        margin-bottom: 60px;
-    }
-
-    .ksl-offer-bubble {
-        position: relative;
-        top: auto;
-        bottom: auto;
-        right: auto;
-        transform: none;
-        width: 100%;
-        max-width: 100%;
-        margin-top: 20px;
-        padding: 16px;
-    }
-
-    .ksl-logo {
-        height: 28px;
-    }
-
-    .ksl-exclusive {
-        font-size: 9px;
-        padding: 3px 6px;
-    }
-
-    .ksl-offer-title {
-        font-size: 16px;
-    }
-
-    .ksl-freebie {
-        font-size: 12px;
-    }
-
-    .ksl-urgency {
-        padding: 8px 10px;
-    }
-
-    .ksl-urgency span {
-        font-size: 11px;
-    }
-
-    .ksl-cta-btn {
-        font-size: 13px;
-        padding: 12px 14px;
-    }
-
-    .ksl-product-image {
-        max-width: 140px;
     }
 
     /* Featured In */
