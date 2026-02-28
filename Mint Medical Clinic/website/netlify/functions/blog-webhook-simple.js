@@ -1,20 +1,13 @@
 /**
- * Mint Medical Clinic - Simple Blog Webhook Handler
+ * Mint Medical Clinic - Blog Webhook Handler
  *
- * This is a simpler webhook that stores articles in Netlify's
- * blob storage or returns them for manual processing.
+ * Open webhook endpoint for receiving blog articles.
  *
- * For a fully static approach, this webhook can:
- * 1. Validate the incoming article
- * 2. Trigger a Netlify build with the new article data
- * 3. Or integrate with a headless CMS
- *
- * Webhook URL: https://your-site.netlify.app/.netlify/functions/blog-webhook-simple
+ * Webhook URL: https://mintmedicalclinic.com/api/blog-webhook
  *
  * Payload Format:
  * {
  *   "action": "create" | "update" | "delete",
- *   "secret": "your-webhook-secret",
  *   "article": {
  *     "slug": "how-acoustic-wave-therapy-works",
  *     "title": "How Acoustic Wave Therapy Works for ED Treatment",
@@ -28,9 +21,6 @@
  *   }
  * }
  */
-
-// Environment variable for webhook authentication
-const WEBHOOK_SECRET = process.env.BLOG_WEBHOOK_SECRET;
 
 // Validate article structure
 function validateArticle(article) {
@@ -86,17 +76,6 @@ exports.handler = async (event, context) => {
 
     try {
         const payload = JSON.parse(event.body);
-
-        // Authenticate
-        if (WEBHOOK_SECRET && payload.secret !== WEBHOOK_SECRET) {
-            console.log('Webhook authentication failed');
-            return {
-                statusCode: 401,
-                headers,
-                body: JSON.stringify({ error: 'Unauthorized - Invalid secret' })
-            };
-        }
-
         const { action, article } = payload;
 
         // Validate action
