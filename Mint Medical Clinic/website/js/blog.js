@@ -1,0 +1,340 @@
+// Mint Medical Clinic - Blog JavaScript
+
+(function() {
+    'use strict';
+
+    const ARTICLES_URL = '/data/articles.json';
+    const ARTICLES_PER_PAGE = 9;
+    let allArticles = [];
+    let filteredArticles = [];
+    let currentPage = 1;
+    let currentCategory = 'all';
+
+    // ===== Initialize Blog =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const blogGrid = document.getElementById('blogGrid');
+        const articleBody = document.getElementById('articleBody');
+
+        if (blogGrid) {
+            // We're on the blog listing page
+            initBlogListing();
+        } else if (articleBody) {
+            // We're on an article page
+            initArticlePage();
+        }
+    });
+
+    // ===== Blog Listing Page =====
+    async function initBlogListing() {
+        try {
+            const response = await fetch(ARTICLES_URL);
+            const data = await response.json();
+            allArticles = data.articles || [];
+
+            // Sort by date (newest first)
+            allArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+            filteredArticles = [...allArticles];
+
+            initCategoryFilters();
+            renderArticles();
+        } catch (error) {
+            console.error('Error loading articles:', error);
+            showEmptyState();
+        }
+    }
+
+    function initCategoryFilters() {
+        const categoryBtns = document.querySelectorAll('.category-btn');
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active state
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Filter articles
+                currentCategory = this.dataset.category;
+                currentPage = 1;
+
+                if (currentCategory === 'all') {
+                    filteredArticles = [...allArticles];
+                } else {
+                    filteredArticles = allArticles.filter(article =>
+                        article.category === currentCategory ||
+                        (article.tags && article.tags.includes(currentCategory))
+                    );
+                }
+
+                renderArticles();
+            });
+        });
+    }
+
+    function renderArticles() {
+        const blogGrid = document.getElementById('blogGrid');
+        const blogEmpty = document.getElementById('blogEmpty');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+        if (!filteredArticles.length) {
+            showEmptyState();
+            return;
+        }
+
+        blogEmpty.style.display = 'none';
+
+        const startIndex = 0;
+        const endIndex = currentPage * ARTICLES_PER_PAGE;
+        const articlesToShow = filteredArticles.slice(startIndex, endIndex);
+
+        blogGrid.innerHTML = articlesToShow.map(article => createArticleCard(article)).join('');
+
+        // Show/hide load more button
+        if (endIndex < filteredArticles.length) {
+            loadMoreContainer.style.display = 'block';
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            loadMoreBtn.onclick = function() {
+                currentPage++;
+                renderArticles();
+            };
+        } else {
+            loadMoreContainer.style.display = 'none';
+        }
+    }
+
+    function createArticleCard(article) {
+        const date = new Date(article.publishedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        const categoryLabel = getCategoryLabel(article.category);
+        const imageUrl = article.featuredImage || '/images/Patient-Consult-scaled-1.jpg';
+
+        return `
+            <article class="blog-card">
+                <a href="/blog/article.html?slug=${article.slug}" class="blog-card-image">
+                    <img src="${imageUrl}" alt="${article.title} - Mint Medical Clinic Blog" loading="lazy">
+                    <span class="blog-card-category">${categoryLabel}</span>
+                </a>
+                <div class="blog-card-content">
+                    <span class="blog-card-date">${date}</span>
+                    <h3><a href="/blog/article.html?slug=${article.slug}">${article.title}</a></h3>
+                    <p>${article.excerpt}</p>
+                    <a href="/blog/article.html?slug=${article.slug}" class="blog-card-link">Read More <span>→</span></a>
+                </div>
+            </article>
+        `;
+    }
+
+    function showEmptyState() {
+        const blogGrid = document.getElementById('blogGrid');
+        const blogEmpty = document.getElementById('blogEmpty');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+        blogGrid.innerHTML = '';
+        blogEmpty.style.display = 'block';
+        loadMoreContainer.style.display = 'none';
+    }
+
+    // ===== Article Page =====
+    async function initArticlePage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const slug = urlParams.get('slug');
+
+        if (!slug) {
+            showArticleError('Article not found');
+            return;
+        }
+
+        try {
+            const response = await fetch(ARTICLES_URL);
+            const data = await response.json();
+            allArticles = data.articles || [];
+
+            const article = allArticles.find(a => a.slug === slug);
+
+            if (!article) {
+                showArticleError('Article not found');
+                return;
+            }
+
+            renderArticle(article);
+            renderRelatedArticles(article);
+            updateMetaTags(article);
+            updateShareButtons(article);
+            updateSchema(article);
+        } catch (error) {
+            console.error('Error loading article:', error);
+            showArticleError('Error loading article');
+        }
+    }
+
+    function renderArticle(article) {
+        const date = new Date(article.publishedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Update breadcrumb
+        document.getElementById('breadcrumbTitle').textContent = article.title;
+
+        // Update header
+        document.getElementById('articleCategory').textContent = getCategoryLabel(article.category);
+        document.getElementById('articleDate').textContent = date;
+        document.getElementById('articleTitle').textContent = article.title;
+        document.getElementById('articleExcerpt').textContent = article.excerpt || '';
+
+        // Update author
+        const authorEl = document.getElementById('articleAuthor');
+        if (article.author) {
+            authorEl.innerHTML = `<span class="author-name">By ${article.author}</span>`;
+        } else {
+            authorEl.innerHTML = '<span class="author-name">By Mint Medical Team</span>';
+        }
+
+        // Update featured image
+        const imageContainer = document.getElementById('articleImage');
+        if (article.featuredImage) {
+            imageContainer.innerHTML = `<img src="${article.featuredImage}" alt="${article.title} - Mint Medical Clinic" title="${article.title}">`;
+        } else {
+            imageContainer.style.display = 'none';
+        }
+
+        // Update body content
+        document.getElementById('articleBody').innerHTML = article.content;
+
+        // Update tags
+        const tagsContainer = document.getElementById('articleTags');
+        if (article.tags && article.tags.length) {
+            tagsContainer.innerHTML = article.tags.map(tag =>
+                `<a href="/blog.html?category=${tag}" class="article-tag">${tag}</a>`
+            ).join('');
+        }
+    }
+
+    function renderRelatedArticles(currentArticle) {
+        const relatedContainer = document.getElementById('relatedArticles');
+
+        // Find related articles (same category, excluding current)
+        const related = allArticles
+            .filter(a => a.slug !== currentArticle.slug)
+            .filter(a => a.category === currentArticle.category ||
+                (a.tags && currentArticle.tags && a.tags.some(t => currentArticle.tags.includes(t))))
+            .slice(0, 3);
+
+        if (related.length) {
+            relatedContainer.innerHTML = related.map(article => createArticleCard(article)).join('');
+        } else {
+            // Show latest articles instead
+            const latest = allArticles
+                .filter(a => a.slug !== currentArticle.slug)
+                .slice(0, 3);
+
+            if (latest.length) {
+                relatedContainer.innerHTML = latest.map(article => createArticleCard(article)).join('');
+            } else {
+                relatedContainer.parentElement.style.display = 'none';
+            }
+        }
+    }
+
+    function updateMetaTags(article) {
+        document.title = `${article.title} | Mint Medical Clinic Blog`;
+
+        const metaTags = {
+            'description': article.excerpt,
+            'title': article.title,
+            'og:title': article.title,
+            'og:description': article.excerpt,
+            'og:url': window.location.href,
+            'og:image': article.featuredImage || 'https://mintmedicalclinic.com/images/og-image.jpg',
+            'twitter:title': article.title,
+            'twitter:description': article.excerpt,
+            'twitter:image': article.featuredImage || 'https://mintmedicalclinic.com/images/og-image.jpg'
+        };
+
+        Object.entries(metaTags).forEach(([name, content]) => {
+            let meta = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+            if (meta) {
+                meta.setAttribute('content', content);
+            }
+        });
+
+        // Update canonical
+        const canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical) {
+            canonical.setAttribute('href', window.location.href);
+        }
+    }
+
+    function updateShareButtons(article) {
+        const url = encodeURIComponent(window.location.href);
+        const title = encodeURIComponent(article.title);
+
+        document.getElementById('shareFacebook').href =
+            `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+
+        document.getElementById('shareTwitter').href =
+            `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+
+        document.getElementById('shareLinkedIn').href =
+            `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`;
+
+        document.getElementById('shareEmail').href =
+            `mailto:?subject=${title}&body=Check out this article: ${url}`;
+    }
+
+    function updateSchema(article) {
+        const schema = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": article.title,
+            "description": article.excerpt,
+            "image": article.featuredImage || "https://mintmedicalclinic.com/images/og-image.jpg",
+            "datePublished": article.publishedAt,
+            "dateModified": article.updatedAt || article.publishedAt,
+            "author": {
+                "@type": "Person",
+                "name": article.author || "Mint Medical Team"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "Mint Medical Clinic",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://mintmedicalclinic.com/images/mint-medical-logo.png"
+                }
+            },
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": window.location.href
+            }
+        };
+
+        document.getElementById('article-schema').textContent = JSON.stringify(schema);
+    }
+
+    function showArticleError(message) {
+        document.getElementById('articleTitle').textContent = message;
+        document.getElementById('articleBody').innerHTML = `
+            <p>${message}. <a href="/blog.html">Return to blog</a>.</p>
+        `;
+    }
+
+    // ===== Utility Functions =====
+    function getCategoryLabel(category) {
+        const labels = {
+            'ed-treatment': 'ED Treatment',
+            'hormone-therapy': 'Hormone Therapy',
+            'weight-loss': 'Weight Loss',
+            'womens-health': "Women's Health",
+            'wellness': 'Wellness',
+            'news': 'News'
+        };
+        return labels[category] || 'Wellness';
+    }
+
+})();
