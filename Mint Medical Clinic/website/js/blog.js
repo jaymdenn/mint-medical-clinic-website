@@ -3,7 +3,7 @@
 (function() {
     'use strict';
 
-    const ARTICLES_URL = '/data/articles.json';
+    const ARTICLES_URL = '/api/blog-webhook';
     const ARTICLES_PER_PAGE = 9;
     let allArticles = [];
     let filteredArticles = [];

@@ -2,38 +2,25 @@
  * Mint Medical Clinic - Blog Webhook Handler
  *
  * Open webhook endpoint for receiving blog articles.
+ * Stores articles in Netlify Blobs for persistence.
  *
  * Webhook URL: https://mintmedicalclinic.com/api/blog-webhook
- *
- * Payload Format:
- * {
- *   "action": "create" | "update" | "delete",
- *   "article": {
- *     "slug": "how-acoustic-wave-therapy-works",
- *     "title": "How Acoustic Wave Therapy Works for ED Treatment",
- *     "excerpt": "Learn how acoustic wave therapy restores natural blood flow...",
- *     "content": "<h2>What is Acoustic Wave Therapy?</h2><p>...</p>",
- *     "category": "ed-treatment",
- *     "tags": ["acoustic wave therapy", "ed treatment", "mens health"],
- *     "author": "Dr. Smith",
- *     "featuredImage": "https://mintmedicalclinic.com/images/AWT.webp",
- *     "publishedAt": "2025-02-28T12:00:00Z"
- *   }
- * }
  */
+
+const { getStore } = require('@netlify/blobs');
 
 // Validate article structure
 function validateArticle(article) {
-    const required = ['slug', 'title', 'content', 'category'];
+    const required = ['slug', 'title', 'content'];
     const missing = required.filter(field => !article[field]);
 
     if (missing.length > 0) {
         return { valid: false, error: `Missing required fields: ${missing.join(', ')}` };
     }
 
-    // Validate category
+    // Validate category if provided
     const validCategories = ['ed-treatment', 'hormone-therapy', 'weight-loss', 'womens-health', 'wellness', 'news'];
-    if (!validCategories.includes(article.category)) {
+    if (article.category && !validCategories.includes(article.category)) {
         return { valid: false, error: `Invalid category. Use: ${validCategories.join(', ')}` };
     }
 
@@ -51,12 +38,30 @@ function sanitizeContent(content) {
     return content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 }
 
+// Get the blob store - works automatically in Netlify's environment
+function getBlobStore() {
+    // Try automatic context first (works during Netlify builds/functions)
+    try {
+        return getStore('articles');
+    } catch (e) {
+        // Fallback with explicit config if env vars are set
+        if (process.env.NETLIFY_AUTH_TOKEN) {
+            return getStore({
+                name: 'articles',
+                siteID: process.env.SITE_ID || '38e7c65c-9693-4bec-9e83-e2312bd923db',
+                token: process.env.NETLIFY_AUTH_TOKEN
+            });
+        }
+        throw e;
+    }
+}
+
 exports.handler = async (event, context) => {
     // CORS headers
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
         'Content-Type': 'application/json'
     };
 
@@ -65,7 +70,53 @@ exports.handler = async (event, context) => {
         return { statusCode: 200, headers, body: '' };
     }
 
-    // Only allow POST
+    let store;
+    try {
+        store = getBlobStore();
+    } catch (error) {
+        console.error('Failed to initialize blob store:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({
+                error: 'Storage not configured',
+                message: 'Please set NETLIFY_AUTH_TOKEN environment variable'
+            })
+        };
+    }
+
+    // GET request - return all articles
+    if (event.httpMethod === 'GET') {
+        try {
+            const { blobs } = await store.list();
+            const articles = [];
+
+            for (const blob of blobs) {
+                const article = await store.get(blob.key, { type: 'json' });
+                if (article) {
+                    articles.push(article);
+                }
+            }
+
+            // Sort by publishedAt (newest first)
+            articles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({ articles, lastUpdated: new Date().toISOString() })
+            };
+        } catch (error) {
+            console.error('Error fetching articles:', error);
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({ articles: [], lastUpdated: new Date().toISOString() })
+            };
+        }
+    }
+
+    // Only allow POST for modifications
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -105,38 +156,33 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // Sanitize content
+        // Handle delete action
+        if (action === 'delete') {
+            await store.delete(article.slug);
+            console.log(`Article deleted: ${article.slug}`);
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({
+                    success: true,
+                    message: 'Article deleted successfully',
+                    slug: article.slug
+                })
+            };
+        }
+
+        // Sanitize content and set defaults for create/update
         const sanitizedArticle = {
             ...article,
             content: sanitizeContent(article.content),
+            category: article.category || 'wellness',
             publishedAt: article.publishedAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
 
-        // Log the received article (for debugging)
-        console.log(`Blog webhook received: ${action} - ${article.slug}`);
-
-        // Option 1: Trigger a Netlify build hook to rebuild the site
-        // You would set up a build hook in Netlify and call it here
-        const BUILD_HOOK_URL = process.env.NETLIFY_BUILD_HOOK;
-        if (BUILD_HOOK_URL) {
-            try {
-                const fetch = require('node-fetch');
-                await fetch(BUILD_HOOK_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action,
-                        article: sanitizedArticle
-                    })
-                });
-                console.log('Build hook triggered');
-            } catch (err) {
-                console.error('Failed to trigger build hook:', err);
-            }
-        }
-
-        // Option 2: Store in Netlify Blobs (if using Netlify Blobs)
-        // This requires @netlify/blobs package
+        // Store the article in Netlify Blobs
+        await store.setJSON(article.slug, sanitizedArticle);
+        console.log(`Article ${action}d: ${article.slug}`);
 
         // Return success with the processed article
         return {

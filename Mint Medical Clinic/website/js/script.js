@@ -2,6 +2,30 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    // ===== Secret Admin Access (7 clicks on logo) =====
+    const logo = document.querySelector('.logo');
+    let logoClickCount = 0;
+    let logoClickTimer = null;
+
+    if (logo) {
+        logo.addEventListener('click', function(e) {
+            logoClickCount++;
+
+            // Reset counter after 3 seconds of no clicks
+            clearTimeout(logoClickTimer);
+            logoClickTimer = setTimeout(() => {
+                logoClickCount = 0;
+            }, 3000);
+
+            // Navigate to admin after 7 clicks
+            if (logoClickCount >= 7) {
+                e.preventDefault();
+                logoClickCount = 0;
+                window.location.href = '/admin/';
+            }
+        });
+    }
+
     // ===== Mobile Menu Toggle =====
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
