@@ -4449,3 +4449,332 @@ ul {
         gap: 8px;
     }
 }
+
+/* ===== Snipcart Cart Button ===== */
+.cart-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--gray-700);
+}
+
+.cart-btn:hover {
+    border-color: var(--mint);
+    color: var(--mint);
+    background: var(--mint-pale);
+}
+
+.cart-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: var(--mint);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-count:empty {
+    display: none;
+}
+
+/* ===== Product Pricing ===== */
+.product-pricing {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.price-original {
+    font-size: 16px;
+    color: var(--gray-400);
+    text-decoration: line-through;
+}
+
+.price-sale {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--mint);
+}
+
+.price-current {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+/* ===== Product Discount Banner ===== */
+.product-discounts-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, var(--mint-light) 0%, var(--mint-pale) 100%);
+    border: 2px solid var(--mint);
+    border-radius: 12px;
+    margin-bottom: 40px;
+}
+
+.discount-item {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--mint-dark);
+}
+
+.discount-divider {
+    color: var(--mint);
+    font-weight: 300;
+}
+
+/* ===== Sale Badge ===== */
+.sale-badge {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+}
+
+/* ===== Snipcart Theme Customization ===== */
+.snipcart-modal__container {
+    font-family: var(--font-family) !important;
+}
+
+.snipcart-cart-header {
+    background: var(--mint) !important;
+}
+
+.snipcart-cart-button,
+.snipcart-button-primary {
+    background: var(--mint) !important;
+    border-color: var(--mint) !important;
+}
+
+.snipcart-cart-button:hover,
+.snipcart-button-primary:hover {
+    background: var(--mint-dark) !important;
+    border-color: var(--mint-dark) !important;
+}
+
+.snipcart-cart-button--highlight {
+    background: var(--mint) !important;
+}
+
+.snipcart__icon--blue path {
+    fill: var(--mint) !important;
+}
+
+/* ===== Product Card Button Updates ===== */
+.product-card .btn {
+    width: 100%;
+    margin-top: auto;
+}
+
+.product-card .snipcart-add-item {
+    font-family: var(--font-family);
+}
+
+/* ===== Responsive Cart Button ===== */
+@media (max-width: 1024px) {
+    .cart-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .cart-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-discounts-banner {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px 16px;
+    }
+
+    .discount-divider {
+        display: none;
+    }
+
+    .cart-btn {
+        order: -1;
+    }
+}
+
+/* ===== Product Image Placeholder ===== */
+.product-image-placeholder {
+    background: var(--gray-100);
+}
+
+.image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    padding: 40px;
+    color: var(--gray-400);
+    text-align: center;
+}
+
+.image-placeholder svg {
+    opacity: 0.5;
+}
+
+.image-placeholder span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.image-placeholder-large {
+    min-height: 400px;
+    padding: 60px;
+}
+
+.image-placeholder-large svg {
+    width: 80px;
+    height: 80px;
+}
+
+.image-placeholder-large span {
+    font-size: 16px;
+}
+
+/* ===== Product Page Hero Pricing ===== */
+.product-pricing-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.price-original-large {
+    font-size: 24px;
+    color: var(--gray-400);
+    text-decoration: line-through;
+}
+
+.price-sale-large {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--mint);
+}
+
+/* ===== Product Discounts Inline ===== */
+.product-discounts-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: var(--mint-pale);
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mint-dark);
+}
+
+.product-discounts-inline span:nth-child(2) {
+    color: var(--mint);
+    font-weight: 300;
+}
+
+/* ===== Product Why Section ===== */
+.product-why-section {
+    padding: 60px 0;
+    background: var(--gray-100);
+}
+
+.why-content-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 40px;
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.why-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mint-light);
+    border-radius: 16px;
+}
+
+.why-content h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: var(--dark);
+}
+
+.why-content p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--gray-700);
+}
+
+/* ===== Product Hero Image Placeholder ===== */
+.product-hero-image.product-image-placeholder {
+    background: var(--gray-100);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+@media (max-width: 768px) {
+    .product-discounts-inline {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .why-content-card {
+        flex-direction: column;
+        padding: 24px;
+        gap: 20px;
+    }
+
+    .why-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .why-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .price-sale-large {
+        font-size: 28px;
+    }
+
+    .image-placeholder-large {
+        min-height: 280px;
+        padding: 40px;
+    }
+}

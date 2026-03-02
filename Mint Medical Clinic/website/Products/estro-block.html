@@ -10,6 +10,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Snipcart -->
+    <script>
+        window.SnipcartSettings = {
+            publicApiKey: 'YzI1Y2ZiNDAtMTY3Ni00MDE1LWE5MzUtM2JhNTdhZGRhNzNiNjM5MDgwNjcxMzQzOTk0MzE0',
+            loadStrategy: 'on-user-interaction',
+            currency: 'usd',
+        };
+
+        (()=>{var c,d;(d=(c=window.SnipcartSettings).version)!=null||(c.version="3.0");var s,S;(S=(s=window.SnipcartSettings).timeoutDuration)!=null||(s.timeoutDuration=2750);var l,p;(p=(l=window.SnipcartSettings).domain)!=null||(l.domain="cdn.snipcart.com");var w,u;(u=(w=window.SnipcartSettings).protocol)!=null||(w.protocol="https");var f=window.SnipcartSettings.version.includes("v3.0.0-ci")||window.SnipcartSettings.version!="3.0"&&window.SnipcartSettings.version.localeCompare("3.4.0",void 0,{numeric:!0,sensitivity:"base"})===-1,m=["focus","mouseover","touchmove","scroll","keydown"];window.LoadSnipcart=o;document.readyState==="loading"?document.addEventListener("DOMContentLoaded",r):r();function r(){window.SnipcartSettings.loadStrategy?window.SnipcartSettings.loadStrategy==="on-user-interaction"&&(m.forEach(t=>document.addEventListener(t,o)),setTimeout(o,window.SnipcartSettings.timeoutDuration)):o()}var a=!1;function o(){if(a)return;a=!0;let t=document.getElementsByTagName("head")[0],e=document.querySelector("#snipcart"),i=document.querySelector(`src[src^="${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}"][src$="snipcart.js"]`),n=document.querySelector(`link[href^="${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}"][href$="snipcart.css"]`);e||(e=document.createElement("div"),e.id="snipcart",e.setAttribute("hidden","true"),document.body.appendChild(e)),v(e),i||(i=document.createElement("script"),i.src=`${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.js`,i.async=!0,t.appendChild(i)),n||(n=document.createElement("link"),n.rel="stylesheet",n.type="text/css",n.href=`${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.css`,t.prepend(n)),m.forEach(g=>document.removeEventListener(g,o))}function v(t){!f||(t.dataset.apiKey=window.SnipcartSettings.publicApiKey,window.SnipcartSettings.addProductBehavior&&(t.dataset.configAddProductBehavior=window.SnipcartSettings.addProductBehavior),window.SnipcartSettings.modalStyle&&(t.dataset.configModalStyle=window.SnipcartSettings.modalStyle),window.SnipcartSettings.currency&&(t.dataset.currency=window.SnipcartSettings.currency),window.SnipcartSettings.templatesUrl&&(t.dataset.templatesUrl=window.SnipcartSettings.templatesUrl))}})();
+    </script>
 </head>
 <body>
     <!-- Promo Banner -->
@@ -38,6 +49,13 @@
                 </ul>
                 <div class="nav-right">
                     <a href="tel:8018048000" class="phone">(801) 804-8000</a>
+                    <button class="snipcart-checkout cart-btn" aria-label="Shopping cart">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        <span class="snipcart-items-count cart-count"></span>
+                    </button>
                     <a href="https://new-consultation.zohobookings.com/#/mintmedicalclinic" target="_blank" rel="noopener" class="btn btn-primary">Book Consultation</a>
                 </div>
                 <button class="mobile-menu-btn" aria-label="Toggle menu">
@@ -57,10 +75,22 @@
                     <img src="../Products/MN-PCT-FRONT@3x.jpg" alt="Mint Estro Block Supplement">
                 </div>
                 <div class="product-hero-content">
-                    <span class="product-badge">Prescription Required</span>
+                    <span class="product-badge sale-badge">Sale - Save $20</span>
                     <h1>Estro Block</h1>
                     <p class="product-subtitle">Natural Aromatase Inhibitor · 60 Capsules</p>
                     <p class="product-description">A physician-formulated supplement designed to support healthy estrogen metabolism and maintain optimal hormone balance. Essential for men on testosterone optimization protocols who want to prevent estrogen-related side effects.</p>
+
+                    <div class="product-pricing-hero">
+                        <span class="price-original-large">$99</span>
+                        <span class="price-sale-large">$79</span>
+                    </div>
+
+                    <div class="product-discounts-inline">
+                        <span>Buy 2, Get 20% Off</span>
+                        <span>|</span>
+                        <span>Buy 3, Get 1 Free</span>
+                    </div>
+
                     <ul class="product-benefits-list">
                         <li>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3EB489" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -84,8 +114,19 @@
                         </li>
                     </ul>
                     <div class="product-hero-ctas">
-                        <a href="https://new-consultation.zohobookings.com/#/mintmedicalclinic" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Schedule Telehealth Visit</a>
-                        <a href="tel:8018048000" class="btn btn-outline btn-lg">Call (801) 804-8000</a>
+                        <button class="snipcart-add-item btn btn-primary btn-lg"
+                            data-item-id="estro-block"
+                            data-item-name="Estro Block"
+                            data-item-price="79.00"
+                            data-item-url="https://mintmedicalclinic.com/Products/estro-block.html"
+                            data-item-description="Hormone balance support - 60 Capsules"
+                            data-item-image="https://mintmedicalclinic.com/Products/MN-PCT-FRONT@3x.jpg"
+                            data-item-weight="150"
+                            data-item-quantity="1"
+                            data-item-max-quantity="10">
+                            Add to Cart - $79
+                        </button>
+                        <button class="snipcart-checkout btn btn-outline btn-lg">View Cart</button>
                     </div>
                 </div>
             </div>

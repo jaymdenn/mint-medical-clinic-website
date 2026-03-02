@@ -47,6 +47,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Snipcart -->
+    <script>
+        window.SnipcartSettings = {
+            publicApiKey: 'YzI1Y2ZiNDAtMTY3Ni00MDE1LWE5MzUtM2JhNTdhZGRhNzNiNjM5MDgwNjcxMzQzOTk0MzE0',
+            loadStrategy: 'on-user-interaction',
+            currency: 'usd',
+        };
+
+        (()=>{var c,d;(d=(c=window.SnipcartSettings).version)!=null||(c.version="3.0");var s,S;(S=(s=window.SnipcartSettings).timeoutDuration)!=null||(s.timeoutDuration=2750);var l,p;(p=(l=window.SnipcartSettings).domain)!=null||(l.domain="cdn.snipcart.com");var w,u;(u=(w=window.SnipcartSettings).protocol)!=null||(w.protocol="https");var f=window.SnipcartSettings.version.includes("v3.0.0-ci")||window.SnipcartSettings.version!="3.0"&&window.SnipcartSettings.version.localeCompare("3.4.0",void 0,{numeric:!0,sensitivity:"base"})===-1,m=["focus","mouseover","touchmove","scroll","keydown"];window.LoadSnipcart=o;document.readyState==="loading"?document.addEventListener("DOMContentLoaded",r):r();function r(){window.SnipcartSettings.loadStrategy?window.SnipcartSettings.loadStrategy==="on-user-interaction"&&(m.forEach(t=>document.addEventListener(t,o)),setTimeout(o,window.SnipcartSettings.timeoutDuration)):o()}var a=!1;function o(){if(a)return;a=!0;let t=document.getElementsByTagName("head")[0],e=document.querySelector("#snipcart"),i=document.querySelector(`src[src^="${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}"][src$="snipcart.js"]`),n=document.querySelector(`link[href^="${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}"][href$="snipcart.css"]`);e||(e=document.createElement("div"),e.id="snipcart",e.setAttribute("hidden","true"),document.body.appendChild(e)),v(e),i||(i=document.createElement("script"),i.src=`${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.js`,i.async=!0,t.appendChild(i)),n||(n=document.createElement("link"),n.rel="stylesheet",n.type="text/css",n.href=`${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.css`,t.prepend(n)),m.forEach(g=>document.removeEventListener(g,o))}function v(t){!f||(t.dataset.apiKey=window.SnipcartSettings.publicApiKey,window.SnipcartSettings.addProductBehavior&&(t.dataset.configAddProductBehavior=window.SnipcartSettings.addProductBehavior),window.SnipcartSettings.modalStyle&&(t.dataset.configModalStyle=window.SnipcartSettings.modalStyle),window.SnipcartSettings.currency&&(t.dataset.currency=window.SnipcartSettings.currency),window.SnipcartSettings.templatesUrl&&(t.dataset.templatesUrl=window.SnipcartSettings.templatesUrl))}})();
+    </script>
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     {
@@ -265,6 +276,13 @@
                 </ul>
                 <div class="nav-right">
                     <a href="tel:8018048000" class="phone">(801) 804-8000</a>
+                    <button class="snipcart-checkout cart-btn" aria-label="Shopping cart">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        <span class="snipcart-items-count cart-count"></span>
+                    </button>
                     <a href="https://new-consultation.zohobookings.com/#/mintmedicalclinic" target="_blank" rel="noopener" class="btn btn-primary">Book Consultation</a>
                 </div>
                 <button class="mobile-menu-btn" aria-label="Toggle menu">
@@ -437,28 +455,49 @@
                 <h2>Premium Wellness Supplements</h2>
                 <p>Pharmaceutical-grade supplements designed to support your wellness journey and optimize your results.</p>
             </div>
+            <div class="product-discounts-banner">
+                <span class="discount-item">Buy 2, Get 20% Off</span>
+                <span class="discount-divider">|</span>
+                <span class="discount-item">Buy 3, Get 1 Free</span>
+            </div>
             <div class="products-grid">
-                <!-- GLP-1 -->
+                <!-- GLP-1 Support Protein -->
                 <div class="product-card product-featured">
-                    <div class="product-badge">Prescription</div>
+                    <div class="product-badge sale-badge">Sale</div>
                     <div class="product-image">
-                        <img src="Products/Mint GLP-1's copy.png" alt="GLP-1 Semaglutide Tirzepatide Weight Loss Injection Utah - Mint Medical Clinic" title="GLP-1 Prescription Weight Loss Program">
+                        <img src="Products/Mint GLP-1's copy.png" alt="GLP-1 Support Protein Supplement - Mint Medical Clinic" title="GLP-1 Support Protein">
                     </div>
                     <div class="product-info">
-                        <h3>GLP-1 Weight Loss</h3>
-                        <p class="product-subtitle">Prescription Weight Loss</p>
-                        <p class="product-description">Clinically prescribed GLP-1 medication that helps regulate appetite and enhances weight loss. Our physician-supervised program delivers proven results with personalized dosing and ongoing support.</p>
+                        <h3>GLP-1 Support Protein</h3>
+                        <p class="product-subtitle">Metabolic Support Formula</p>
+                        <p class="product-description">Premium protein formula designed to support your GLP-1 weight loss journey. Helps maintain lean muscle mass while enhancing metabolic function for optimal results.</p>
+                        <div class="product-pricing">
+                            <span class="price-original">$129</span>
+                            <span class="price-sale">$99</span>
+                        </div>
                         <ul class="product-features">
-                            <li>Clinically prescribed</li>
-                            <li>Appetite regulation</li>
-                            <li>Proven results</li>
+                            <li>Metabolic support</li>
+                            <li>Lean muscle preservation</li>
+                            <li>Enhanced results</li>
                         </ul>
-                        <a href="/products/glp1.html" class="btn btn-primary">Get Started</a>
+                        <button class="snipcart-add-item btn btn-primary"
+                            data-item-id="glp1-support-protein"
+                            data-item-name="GLP-1 Support Protein"
+                            data-item-price="99.00"
+                            data-item-url="https://mintmedicalclinic.com/#products"
+                            data-item-description="Premium protein formula designed to support your GLP-1 weight loss journey."
+                            data-item-image="https://mintmedicalclinic.com/Products/Mint GLP-1's copy.png"
+                            data-item-weight="500"
+                            data-item-quantity="1"
+                            data-item-max-quantity="10">
+                            Add to Cart
+                        </button>
                     </div>
                 </div>
 
                 <!-- Test Boost -->
                 <div class="product-card">
+                    <div class="product-badge sale-badge">Sale</div>
                     <div class="product-image">
                         <img src="Products/MN-TEST-FRONT@3x.jpg" alt="Test Boost Natural Testosterone Support Supplement - Mint Medical Clinic" title="Test Boost - Natural Testosterone Support">
                     </div>
@@ -466,12 +505,28 @@
                         <h3>Test Boost</h3>
                         <p class="product-subtitle">Testosterone Support · 90 Capsules</p>
                         <p class="product-description">Natural testosterone support formula designed to help optimize hormone levels, increase energy, enhance muscle recovery, and support overall male vitality.</p>
-                        <a href="/products/test-boost.html" class="btn btn-outline btn-sm">Learn More</a>
+                        <div class="product-pricing">
+                            <span class="price-original">$99</span>
+                            <span class="price-sale">$79</span>
+                        </div>
+                        <button class="snipcart-add-item btn btn-primary"
+                            data-item-id="test-boost"
+                            data-item-name="Test Boost"
+                            data-item-price="79.00"
+                            data-item-url="https://mintmedicalclinic.com/#products"
+                            data-item-description="Natural testosterone support formula - 90 Capsules"
+                            data-item-image="https://mintmedicalclinic.com/Products/MN-TEST-FRONT@3x.jpg"
+                            data-item-weight="200"
+                            data-item-quantity="1"
+                            data-item-max-quantity="10">
+                            Add to Cart
+                        </button>
                     </div>
                 </div>
 
                 <!-- Vaso Pump -->
                 <div class="product-card">
+                    <div class="product-badge sale-badge">Sale</div>
                     <div class="product-image">
                         <img src="Products/MN-VASOPUMP-FRONT@3x.jpg" alt="Vaso Pump Blood Flow Circulation Supplement for ED Support - Mint Medical" title="Vaso Pump - Blood Flow & Circulation Support">
                     </div>
@@ -479,12 +534,28 @@
                         <h3>Vaso Pump</h3>
                         <p class="product-subtitle">Vasodilator · 60 Capsules</p>
                         <p class="product-description">Advanced vasodilator formula that promotes healthy blood flow and circulation. Supports cardiovascular health and enhances physical performance naturally.</p>
-                        <a href="/products/vaso-pump.html" class="btn btn-outline btn-sm">Learn More</a>
+                        <div class="product-pricing">
+                            <span class="price-original">$99</span>
+                            <span class="price-sale">$79</span>
+                        </div>
+                        <button class="snipcart-add-item btn btn-primary"
+                            data-item-id="vaso-pump"
+                            data-item-name="Vaso Pump"
+                            data-item-price="79.00"
+                            data-item-url="https://mintmedicalclinic.com/#products"
+                            data-item-description="Advanced vasodilator formula - 60 Capsules"
+                            data-item-image="https://mintmedicalclinic.com/Products/MN-VASOPUMP-FRONT@3x.jpg"
+                            data-item-weight="150"
+                            data-item-quantity="1"
+                            data-item-max-quantity="10">
+                            Add to Cart
+                        </button>
                     </div>
                 </div>
 
                 <!-- Estro Block -->
                 <div class="product-card">
+                    <div class="product-badge sale-badge">Sale</div>
                     <div class="product-image">
                         <img src="Products/MN-PCT-FRONT@3x.jpg" alt="Estro Block Estrogen Balance Hormone Support Supplement - Mint Medical" title="Estro Block - Hormone Balance Support">
                     </div>
@@ -492,12 +563,28 @@
                         <h3>Estro Block</h3>
                         <p class="product-subtitle">Aromatase Inhibitor · 60 Capsules</p>
                         <p class="product-description">Helps maintain healthy estrogen levels by naturally supporting hormone balance. Ideal companion supplement for testosterone optimization protocols.</p>
-                        <a href="/products/estro-block.html" class="btn btn-outline btn-sm">Learn More</a>
+                        <div class="product-pricing">
+                            <span class="price-original">$99</span>
+                            <span class="price-sale">$79</span>
+                        </div>
+                        <button class="snipcart-add-item btn btn-primary"
+                            data-item-id="estro-block"
+                            data-item-name="Estro Block"
+                            data-item-price="79.00"
+                            data-item-url="https://mintmedicalclinic.com/#products"
+                            data-item-description="Hormone balance support - 60 Capsules"
+                            data-item-image="https://mintmedicalclinic.com/Products/MN-PCT-FRONT@3x.jpg"
+                            data-item-weight="150"
+                            data-item-quantity="1"
+                            data-item-max-quantity="10">
+                            Add to Cart
+                        </button>
                     </div>
                 </div>
 
                 <!-- Colon Cleanse -->
                 <div class="product-card">
+                    <div class="product-badge sale-badge">Sale</div>
                     <div class="product-image">
                         <img src="Products/MN-CLEANSE-FRONT@3x.jpg" alt="Colon Cleanse Natural Digestive Health Detox Supplement - Mint Medical" title="Colon Cleanse - Natural Digestive Support">
                     </div>
@@ -505,7 +592,58 @@
                         <h3>Colon Cleanse</h3>
                         <p class="product-subtitle">Natural Colon Flush · 60 Capsules</p>
                         <p class="product-description">Gentle yet effective natural colon cleanse formula that supports digestive health, promotes regularity, and helps eliminate toxins for improved overall wellness.</p>
-                        <a href="/products/colon-cleanse.html" class="btn btn-outline btn-sm">Learn More</a>
+                        <div class="product-pricing">
+                            <span class="price-original">$99</span>
+                            <span class="price-sale">$79</span>
+                        </div>
+                        <button class="snipcart-add-item btn btn-primary"
+                            data-item-id="colon-cleanse"
+                            data-item-name="Colon Cleanse"
+                            data-item-price="79.00"
+                            data-item-url="https://mintmedicalclinic.com/#products"
+                            data-item-description="Natural colon cleanse formula - 60 Capsules"
+                            data-item-image="https://mintmedicalclinic.com/Products/MN-CLEANSE-FRONT@3x.jpg"
+                            data-item-weight="150"
+                            data-item-quantity="1"
+                            data-item-max-quantity="10">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Super Ionic Mint Minerals -->
+                <div class="product-card">
+                    <div class="product-badge sale-badge">Sale</div>
+                    <div class="product-image product-image-placeholder">
+                        <div class="image-placeholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                            <span>Image Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Super Ionic Mint Minerals</h3>
+                        <p class="product-subtitle">Electrolyte & Mineral Complex</p>
+                        <p class="product-description">Premium ionic mineral formula for optimal hydration, energy production, and cellular function. Supports muscle recovery, nerve function, and overall vitality.</p>
+                        <div class="product-pricing">
+                            <span class="price-original">$89</span>
+                            <span class="price-sale">$69</span>
+                        </div>
+                        <button class="snipcart-add-item btn btn-primary"
+                            data-item-id="super-ionic-mint-minerals"
+                            data-item-name="Super Ionic Mint Minerals"
+                            data-item-price="69.00"
+                            data-item-url="https://mintmedicalclinic.com/#products"
+                            data-item-description="Premium ionic mineral formula for optimal hydration and energy"
+                            data-item-image="https://mintmedicalclinic.com/images/mint-medical-logo.png"
+                            data-item-weight="200"
+                            data-item-quantity="1"
+                            data-item-max-quantity="10">
+                            Add to Cart
+                        </button>
                     </div>
                 </div>
             </div>
