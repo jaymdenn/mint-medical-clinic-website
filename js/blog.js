@@ -203,8 +203,8 @@
             imageContainer.style.display = 'none';
         }
 
-        // Update body content
-        document.getElementById('articleBody').innerHTML = article.content;
+        // Update body content with CTA boxes
+        document.getElementById('articleBody').innerHTML = insertArticleCTAs(article.content);
 
         // Update tags
         const tagsContainer = document.getElementById('articleTags');
@@ -325,6 +325,48 @@
     }
 
     // ===== Utility Functions =====
+
+    // CTA box HTML template
+    function getCtaBoxHtml() {
+        return `
+            <div class="article-cta-box">
+                <h3>Ready to Take the Next Step?</h3>
+                <p>Schedule your FREE consultation today and discover how we can help you achieve your health goals.</p>
+                <a href="https://new-consultation.zohobookings.com/#/mintmedicalclinic" target="_blank" rel="noopener" class="btn">Schedule Free Consultation</a>
+            </div>
+        `;
+    }
+
+    // Insert CTA boxes into article content
+    function insertArticleCTAs(content) {
+        // Create a temporary container to parse the HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+
+        // Get all block-level elements (paragraphs, headings, lists, etc.)
+        const blockElements = tempDiv.querySelectorAll('p, h2, h3, h4, ul, ol, blockquote');
+        const totalBlocks = blockElements.length;
+
+        // Only insert CTAs if there's enough content
+        if (totalBlocks < 4) {
+            // If short article, just add CTA at the end
+            return content + getCtaBoxHtml();
+        }
+
+        // Calculate position for first CTA (approximately 1/3 through)
+        const firstCtaPosition = Math.floor(totalBlocks / 3);
+
+        // Insert first CTA after the calculated position
+        if (blockElements[firstCtaPosition]) {
+            blockElements[firstCtaPosition].insertAdjacentHTML('afterend', getCtaBoxHtml());
+        }
+
+        // Add CTA at the end
+        tempDiv.innerHTML += getCtaBoxHtml();
+
+        return tempDiv.innerHTML;
+    }
+
     function getCategoryLabel(category) {
         const labels = {
             'ed-treatment': 'ED Treatment',

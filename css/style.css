@@ -4306,6 +4306,63 @@ ul {
     margin: 32px 0;
 }
 
+/* In-Article CTA Box */
+.article-cta-box {
+    margin: 48px 0;
+    padding: 32px;
+    background: linear-gradient(135deg, var(--mint) 0%, #2d9970 100%);
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.article-cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.article-cta-box h3 {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    position: relative;
+}
+
+.article-cta-box p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    margin: 0 0 24px 0;
+    position: relative;
+}
+
+.article-cta-box .btn {
+    background: #fff;
+    color: var(--mint);
+    padding: 14px 32px;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 8px;
+    display: inline-block;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.article-cta-box .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    background: #f8f8f8;
+}
+
 /* Article Footer */
 .article-footer {
     max-width: 720px;
@@ -4453,6 +4510,25 @@ ul {
 
     .article-body h3 {
         font-size: 20px;
+    }
+
+    .article-cta-box {
+        margin: 36px 0;
+        padding: 24px 20px;
+    }
+
+    .article-cta-box h3 {
+        font-size: 20px;
+    }
+
+    .article-cta-box p {
+        font-size: 15px;
+    }
+
+    .article-cta-box .btn {
+        padding: 12px 24px;
+        font-size: 15px;
+        width: 100%;
     }
 
     .article-share {
