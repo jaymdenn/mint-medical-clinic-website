@@ -1391,6 +1391,238 @@ ul {
     color: rgba(255, 255, 255, 0.8);
 }
 
+/* ===== Financing Page ===== */
+.page-hero-financing {
+    background: linear-gradient(135deg, rgba(26, 37, 32, 0.95), rgba(62, 180, 137, 0.85)),
+                url('../images/Patient-Consult-scaled-1.jpg') center/cover;
+}
+
+.financing-main {
+    padding: 80px 0;
+    background: var(--gray-50);
+}
+
+.financing-cta-box {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 60px;
+    align-items: center;
+    background: var(--white);
+    padding: 60px;
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+}
+
+.financing-cta-content h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 16px;
+}
+
+.financing-cta-content > p {
+    font-size: 18px;
+    color: var(--gray-600);
+    margin-bottom: 32px;
+}
+
+.financing-highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.financing-highlights li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--dark);
+}
+
+.financing-highlights svg {
+    flex-shrink: 0;
+}
+
+.btn-xl {
+    padding: 18px 48px;
+    font-size: 18px;
+}
+
+.financing-disclaimer {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--gray-500);
+}
+
+.financing-cta-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: var(--mint-pale);
+    border-radius: 12px;
+}
+
+.financing-cta-image svg {
+    opacity: 0.6;
+}
+
+/* Financing Process Steps */
+.financing-process {
+    padding: 80px 0;
+    background: var(--white);
+}
+
+.financing-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 48px;
+}
+
+.financing-step {
+    text-align: center;
+    padding: 40px 32px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    position: relative;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--mint);
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.financing-step h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 12px;
+}
+
+.financing-step p {
+    font-size: 15px;
+    color: var(--gray-600);
+    line-height: 1.6;
+}
+
+/* Why Finance Section */
+.why-finance {
+    padding: 80px 0;
+    background: var(--gray-50);
+}
+
+/* Financing FAQ */
+.financing-faq {
+    padding: 80px 0;
+    background: var(--white);
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+}
+
+.faq-item {
+    padding: 32px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border-left: 4px solid var(--mint);
+}
+
+.faq-item h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 12px;
+}
+
+.faq-item p {
+    font-size: 15px;
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Financing Responsive */
+@media (max-width: 1024px) {
+    .financing-cta-box {
+        grid-template-columns: 1fr;
+        padding: 40px;
+    }
+
+    .financing-cta-image {
+        display: none;
+    }
+
+    .financing-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .financing-steps {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .faq-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .financing-main {
+        padding: 48px 0;
+    }
+
+    .financing-cta-box {
+        padding: 32px 24px;
+    }
+
+    .financing-cta-content h2 {
+        font-size: 28px;
+    }
+
+    .financing-cta-content > p {
+        font-size: 16px;
+    }
+
+    .btn-xl {
+        width: 100%;
+        padding: 16px 32px;
+        font-size: 16px;
+    }
+
+    .financing-process,
+    .why-finance,
+    .financing-faq {
+        padding: 48px 0;
+    }
+
+    .financing-step {
+        padding: 32px 24px;
+    }
+
+    .faq-item {
+        padding: 24px;
+    }
+}
+
 /* ===== Footer ===== */
 .footer {
     padding: 80px 0 0;
