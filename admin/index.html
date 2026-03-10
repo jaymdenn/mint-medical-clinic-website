@@ -1043,12 +1043,12 @@
             const tbody = document.getElementById('articlesTableBody');
             tbody.innerHTML = articles.map(article => `
                 <tr>
-                    <td class="article-title">${article.title}</td>
-                    <td><span class="article-category">${getCategoryName(article.category)}</span></td>
-                    <td>${formatDate(article.publishedAt)}</td>
+                    <td class="article-title">${escapeHtml(article.title)}</td>
+                    <td><span class="article-category">${escapeHtml(getCategoryName(article.category))}</span></td>
+                    <td>${escapeHtml(formatDate(article.publishedAt))}</td>
                     <td class="article-actions">
-                        <button class="btn btn-secondary btn-sm" onclick="editArticle('${article.slug}')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article.slug}', '${article.title.replace(/'/g, "\\'")}')">Delete</button>
+                        <button class="btn btn-secondary btn-sm" data-article-slug="${escapeHtml(article.slug)}" onclick="editArticle(this.dataset.articleSlug)">Edit</button>
+                        <button class="btn btn-danger btn-sm" data-article-slug="${escapeHtml(article.slug)}" data-article-title="${escapeHtml(article.title)}" onclick="deleteArticle(this.dataset.articleSlug, this.dataset.articleTitle)">Delete</button>
                     </td>
                 </tr>
             `).join('');
@@ -1119,7 +1119,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: editingSlug ? 'update' : 'create',
-                        article
+                        article,
+                        token: authToken
                     })
                 });
                 const data = await res.json();
@@ -1129,6 +1130,11 @@
                     closeArticleModal();
                     loadArticles();
                 } else {
+                    if (res.status === 401) {
+                        localStorage.removeItem('adminToken');
+                        authToken = null;
+                        showLogin();
+                    }
                     showToast(data.error || 'Failed to save article', 'error');
                 }
             } catch (e) {
@@ -1156,7 +1162,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         action: 'delete',
-                        article: { slug: deletingSlug }
+                        article: { slug: deletingSlug },
+                        token: authToken
                     })
                 });
                 const data = await res.json();
@@ -1166,6 +1173,11 @@
                     closeDeleteModal();
                     loadArticles();
                 } else {
+                    if (res.status === 401) {
+                        localStorage.removeItem('adminToken');
+                        authToken = null;
+                        showLogin();
+                    }
                     showToast(data.error || 'Failed to delete article', 'error');
                 }
             } catch (e) {
@@ -1205,10 +1217,10 @@
             const list = document.getElementById('categoriesList');
             list.innerHTML = categories.map(cat => `
                 <div class="category-item">
-                    <span><strong>${cat.name}</strong> <span style="color: var(--gray-400);">(${cat.id})</span></span>
+                    <span><strong>${escapeHtml(cat.name)}</strong> <span style="color: var(--gray-400);">(${escapeHtml(cat.id)})</span></span>
                     <div class="article-actions">
-                        <button class="btn btn-secondary btn-sm" onclick="editCategory('${cat.id}', '${cat.name.replace(/'/g, "\\'")}')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteCategory('${cat.id}', '${cat.name.replace(/'/g, "\\'")}')">Delete</button>
+                        <button class="btn btn-secondary btn-sm" data-cat-id="${escapeHtml(cat.id)}" data-cat-name="${escapeHtml(cat.name)}" onclick="editCategory(this.dataset.catId, this.dataset.catName)">Edit</button>
+                        <button class="btn btn-danger btn-sm" data-cat-id="${escapeHtml(cat.id)}" data-cat-name="${escapeHtml(cat.name)}" onclick="deleteCategory(this.dataset.catId, this.dataset.catName)">Delete</button>
                     </div>
                 </div>
             `).join('');
@@ -1357,9 +1369,9 @@
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = users.map(user => `
                 <tr>
-                    <td><strong>${user.name}</strong></td>
-                    <td>${user.username}</td>
-                    <td>${formatDate(user.createdAt)}</td>
+                    <td><strong>${escapeHtml(user.name)}</strong></td>
+                    <td>${escapeHtml(user.username)}</td>
+                    <td>${escapeHtml(formatDate(user.createdAt))}</td>
                 </tr>
             `).join('');
         }
@@ -1447,6 +1459,14 @@
             if (url) {
                 document.execCommand('createLink', false, url);
             }
+        }
+
+        // Escape for safe HTML and attribute use (XSS prevention)
+        function escapeHtml(str) {
+            if (str == null) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         }
 
         // Utility Functions

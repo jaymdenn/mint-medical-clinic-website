@@ -66,8 +66,18 @@ exports.handler = async (event, context) => {
     }
 
     try {
+        let payload;
+        try {
+            payload = event.body ? JSON.parse(event.body) : {};
+        } catch (_) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'Invalid JSON body' })
+            };
+        }
+
         const { users, sessions, categories } = getStores();
-        const payload = JSON.parse(event.body);
         const { action } = payload;
 
         switch (action) {
@@ -204,6 +214,22 @@ exports.handler = async (event, context) => {
                     };
                 }
 
+                if (username.length > 128) {
+                    return {
+                        statusCode: 400,
+                        headers,
+                        body: JSON.stringify({ error: 'Username too long' })
+                    };
+                }
+
+                if (password.length < 8) {
+                    return {
+                        statusCode: 400,
+                        headers,
+                        body: JSON.stringify({ error: 'Password must be at least 8 characters' })
+                    };
+                }
+
                 // Check if user exists
                 const existingUser = await users.get(username.toLowerCase(), { type: 'json' });
                 if (existingUser) {
@@ -266,6 +292,14 @@ exports.handler = async (event, context) => {
                     };
                 }
 
+                if (!newPassword || newPassword.length < 8) {
+                    return {
+                        statusCode: 400,
+                        headers,
+                        body: JSON.stringify({ error: 'New password must be at least 8 characters' })
+                    };
+                }
+
                 const { hash, salt } = hashPassword(newPassword);
                 user.passwordHash = hash;
                 user.salt = salt;
@@ -281,15 +315,12 @@ exports.handler = async (event, context) => {
             }
 
             case 'check-setup': {
-                // Check if any users exist
+                // Check if any users exist (do not expose user count)
                 const { blobs } = await users.list();
                 return {
                     statusCode: 200,
                     headers,
-                    body: JSON.stringify({
-                        needsSetup: blobs.length === 0,
-                        userCount: blobs.length
-                    })
+                    body: JSON.stringify({ needsSetup: blobs.length === 0 })
                 };
             }
 
@@ -360,6 +391,14 @@ exports.handler = async (event, context) => {
                     };
                 }
 
+                if (id.length > 64 || !/^[a-z0-9-]+$/.test(id)) {
+                    return {
+                        statusCode: 400,
+                        headers,
+                        body: JSON.stringify({ error: 'Category ID must be lowercase alphanumeric with hyphens, max 64 characters' })
+                    };
+                }
+
                 // Check if category exists
                 const existing = await categories.get(id, { type: 'json' });
                 if (existing) {
@@ -410,6 +449,14 @@ exports.handler = async (event, context) => {
                         statusCode: 400,
                         headers,
                         body: JSON.stringify({ error: 'Category ID and name are required' })
+                    };
+                }
+
+                if (id.length > 64 || !/^[a-z0-9-]+$/.test(id)) {
+                    return {
+                        statusCode: 400,
+                        headers,
+                        body: JSON.stringify({ error: 'Category ID must be lowercase alphanumeric with hyphens, max 64 characters' })
                     };
                 }
 
@@ -533,7 +580,7 @@ exports.handler = async (event, context) => {
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Internal server error', message: error.message })
+            body: JSON.stringify({ error: 'Internal server error' })
         };
     }
 };

@@ -1,13 +1,41 @@
 /**
  * Mint Medical Clinic - Blog Webhook Handler
  *
- * Open webhook endpoint for receiving blog articles.
- * Stores articles in Netlify Blobs for persistence.
- *
+ * Authenticated endpoint for blog article CRUD. GET is public; POST requires admin token.
  * Webhook URL: https://mintmedicalclinic.com/api/blog-webhook
  */
 
 const { getStore } = require('@netlify/blobs');
+
+// Get blob store with fallback for manual config
+function getBlobStore(name) {
+    try {
+        return getStore(name);
+    } catch (e) {
+        if (process.env.NETLIFY_AUTH_TOKEN) {
+            return getStore({
+                name,
+                siteID: process.env.SITE_ID || '38e7c65c-9693-4bec-9e83-e2312bd923db',
+                token: process.env.NETLIFY_AUTH_TOKEN
+            });
+        }
+        throw e;
+    }
+}
+
+// Validate admin session token (shared with admin-auth)
+async function validateAdminToken(token) {
+    if (!token || typeof token !== 'string') return false;
+    try {
+        const sessions = getBlobStore('admin-sessions');
+        const session = await sessions.get(token, { type: 'json' });
+        if (!session || !session.expiresAt) return false;
+        if (new Date(session.expiresAt) < new Date()) return false;
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
 
 // Validate article structure
 function validateArticle(article) {
@@ -23,36 +51,44 @@ function validateArticle(article) {
         return { valid: false, error: 'Category must be lowercase alphanumeric with hyphens only' };
     }
 
-    // Validate slug format
+    // Validate slug format and length
     if (!/^[a-z0-9-]+$/.test(article.slug)) {
         return { valid: false, error: 'Slug must be lowercase alphanumeric with hyphens only' };
+    }
+    if (article.slug.length > 128) {
+        return { valid: false, error: 'Slug too long' };
+    }
+    if (article.title && article.title.length > 500) {
+        return { valid: false, error: 'Title too long' };
+    }
+    if (article.excerpt && article.excerpt.length > 1000) {
+        return { valid: false, error: 'Excerpt too long' };
     }
 
     return { valid: true };
 }
 
-// Sanitize HTML content (basic)
+// Sanitize HTML content: remove script, iframe, object, embed, form, event handlers
 function sanitizeContent(content) {
-    // Remove script tags
-    return content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    if (typeof content !== 'string') return '';
+    let out = content
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+        .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+        .replace(/<embed\b[^>]*>/gi, '')
+        .replace(/<form\b[^<]*(?:(?!<\/form>)<[^<]*)*<\/form>/gi, '')
+        .replace(/\s on\w+\s*=\s*["'][^"']*["']/gi, '')
+        .replace(/\s on\w+\s*=\s*[^\s>]+/gi, '');
+    return out;
 }
 
-// Get the blob store - works automatically in Netlify's environment
-function getBlobStore() {
-    // Try automatic context first (works during Netlify builds/functions)
-    try {
-        return getStore('articles');
-    } catch (e) {
-        // Fallback with explicit config if env vars are set
-        if (process.env.NETLIFY_AUTH_TOKEN) {
-            return getStore({
-                name: 'articles',
-                siteID: process.env.SITE_ID || '38e7c65c-9693-4bec-9e83-e2312bd923db',
-                token: process.env.NETLIFY_AUTH_TOKEN
-            });
-        }
-        throw e;
-    }
+// Allow only https or relative URLs for images (no javascript:, data:, etc.)
+function sanitizeImageUrl(url) {
+    if (!url || typeof url !== 'string') return '';
+    const t = url.trim();
+    if (!t) return '';
+    if (t.startsWith('https://') || t.startsWith('/')) return t;
+    return '';
 }
 
 exports.handler = async (event, context) => {
@@ -71,16 +107,13 @@ exports.handler = async (event, context) => {
 
     let store;
     try {
-        store = getBlobStore();
+        store = getBlobStore('articles');
     } catch (error) {
-        console.error('Failed to initialize blob store:', error);
+        console.error('Failed to initialize blob store:', error.message);
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({
-                error: 'Storage not configured',
-                message: 'Please set NETLIFY_AUTH_TOKEN environment variable'
-            })
+            body: JSON.stringify({ error: 'Storage not configured' })
         };
     }
 
@@ -115,7 +148,7 @@ exports.handler = async (event, context) => {
         }
     }
 
-    // Only allow POST for modifications
+    // Only allow POST for modifications (requires admin auth)
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -124,10 +157,30 @@ exports.handler = async (event, context) => {
         };
     }
 
+    let payload;
     try {
-        const payload = JSON.parse(event.body);
-        const { action, article } = payload;
+        payload = event.body ? JSON.parse(event.body) : {};
+    } catch (_) {
+        return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: 'Invalid JSON body' })
+        };
+    }
 
+    const { action, article, token } = payload;
+
+    // Require valid admin token for any write
+    const valid = await validateAdminToken(token);
+    if (!valid) {
+        return {
+            statusCode: 401,
+            headers,
+            body: JSON.stringify({ error: 'Unauthorized' })
+        };
+    }
+
+    try {
         // Validate action
         if (!['create', 'update', 'delete'].includes(action)) {
             return {
@@ -174,6 +227,7 @@ exports.handler = async (event, context) => {
         const sanitizedArticle = {
             ...article,
             content: sanitizeContent(article.content),
+            featuredImage: sanitizeImageUrl(article.featuredImage) || '',
             category: article.category || 'wellness',
             publishedAt: article.publishedAt || new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -205,10 +259,7 @@ exports.handler = async (event, context) => {
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({
-                error: 'Internal server error',
-                message: error.message
-            })
+            body: JSON.stringify({ error: 'Internal server error' })
         };
     }
 };

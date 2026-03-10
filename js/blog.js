@@ -6,6 +6,13 @@
     const ARTICLES_URL = '/api/blog-webhook';
     const ARTICLES_PER_PAGE = 9;
     let allArticles = [];
+
+    function escapeHtml(str) {
+        if (str == null) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
     let filteredArticles = [];
     let currentPage = 1;
     let currentCategory = 'all';
@@ -112,17 +119,19 @@
         const categoryLabel = getCategoryLabel(article.category);
         const imageUrl = article.featuredImage || '/images/Patient-Consult-scaled-1.jpg';
 
+        const safeSlug = encodeURIComponent(article.slug);
+        const safeImageUrl = (imageUrl && (imageUrl.startsWith('https://') || imageUrl.startsWith('/'))) ? imageUrl : '/images/Patient-Consult-scaled-1.jpg';
         return `
             <article class="blog-card">
-                <a href="/blog/article.html?slug=${article.slug}" class="blog-card-image">
-                    <img src="${imageUrl}" alt="${article.title} - Mint Medical Clinic Blog" loading="lazy">
-                    <span class="blog-card-category">${categoryLabel}</span>
+                <a href="/blog/article.html?slug=${safeSlug}" class="blog-card-image">
+                    <img src="${escapeHtml(safeImageUrl)}" alt="${escapeHtml(article.title)} - Mint Medical Clinic Blog" loading="lazy">
+                    <span class="blog-card-category">${escapeHtml(categoryLabel)}</span>
                 </a>
                 <div class="blog-card-content">
-                    <span class="blog-card-date">${date}</span>
-                    <h3><a href="/blog/article.html?slug=${article.slug}">${article.title}</a></h3>
-                    <p>${article.excerpt}</p>
-                    <a href="/blog/article.html?slug=${article.slug}" class="blog-card-link">Read More <span>→</span></a>
+                    <span class="blog-card-date">${escapeHtml(date)}</span>
+                    <h3><a href="/blog/article.html?slug=${safeSlug}">${escapeHtml(article.title)}</a></h3>
+                    <p>${escapeHtml(article.excerpt || '')}</p>
+                    <a href="/blog/article.html?slug=${safeSlug}" class="blog-card-link">Read More <span>→</span></a>
                 </div>
             </article>
         `;
@@ -187,18 +196,25 @@
         document.getElementById('articleTitle').textContent = article.title;
         document.getElementById('articleExcerpt').textContent = article.excerpt || '';
 
-        // Update author
+        // Update author (escape to prevent XSS)
         const authorEl = document.getElementById('articleAuthor');
         if (article.author) {
-            authorEl.innerHTML = `<span class="author-name">By ${article.author}</span>`;
+            authorEl.textContent = 'By ' + article.author;
         } else {
-            authorEl.innerHTML = '<span class="author-name">By Mint Medical Team</span>';
+            authorEl.textContent = 'By Mint Medical Team';
         }
 
-        // Update featured image
+        // Update featured image (only allow https or relative URLs)
         const imageContainer = document.getElementById('articleImage');
-        if (article.featuredImage) {
-            imageContainer.innerHTML = `<img src="${article.featuredImage}" alt="${article.title} - Mint Medical Clinic" title="${article.title}">`;
+        const imgUrl = article.featuredImage && (article.featuredImage.startsWith('https://') || article.featuredImage.startsWith('/'))
+            ? article.featuredImage : '';
+        if (imgUrl) {
+            const img = document.createElement('img');
+            img.src = imgUrl;
+            img.alt = article.title + ' - Mint Medical Clinic';
+            img.title = article.title;
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(img);
         } else {
             imageContainer.style.display = 'none';
         }
@@ -206,11 +222,11 @@
         // Update body content with CTA boxes
         document.getElementById('articleBody').innerHTML = insertArticleCTAs(article.content);
 
-        // Update tags
+        // Update tags (escape tag text)
         const tagsContainer = document.getElementById('articleTags');
         if (article.tags && article.tags.length) {
             tagsContainer.innerHTML = article.tags.map(tag =>
-                `<a href="/blog.html?category=${tag}" class="article-tag">${tag}</a>`
+                `<a href="/blog.html?category=${encodeURIComponent(tag)}" class="article-tag">${escapeHtml(tag)}</a>`
             ).join('');
         }
     }
@@ -319,9 +335,7 @@
 
     function showArticleError(message) {
         document.getElementById('articleTitle').textContent = message;
-        document.getElementById('articleBody').innerHTML = `
-            <p>${message}. <a href="/blog.html">Return to blog</a>.</p>
-        `;
+        document.getElementById('articleBody').innerHTML = '<p>' + escapeHtml(message) + '. <a href="/blog.html">Return to blog</a>.</p>';
     }
 
     // ===== Utility Functions =====
