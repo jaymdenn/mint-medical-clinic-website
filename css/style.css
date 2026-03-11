@@ -1009,6 +1009,7 @@ ul {
 
 .product-card {
     display: flex;
+    flex-direction: column;
     background: var(--white);
     border-radius: 16px;
     overflow: hidden;
@@ -1022,6 +1023,18 @@ ul {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(62, 180, 137, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
     border-color: rgba(62, 180, 137, 0.25);
+}
+
+.product-link {
+    display: flex;
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.product-card .product-link:hover {
+    text-decoration: none;
 }
 
 .product-featured {
@@ -5069,9 +5082,10 @@ ul {
 }
 
 /* ===== Product Card Button Updates ===== */
-.product-card .btn {
-    width: 100%;
-    margin-top: auto;
+.product-card > .btn,
+.product-card > .snipcart-add-item {
+    width: calc(100% - 48px);
+    margin: 0 24px 24px;
 }
 
 .product-card .snipcart-add-item {
