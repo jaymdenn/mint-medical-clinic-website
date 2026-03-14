@@ -29,33 +29,66 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== Mobile Menu Toggle =====
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
+    const backdrop = document.querySelector('.mobile-menu-backdrop');
     const body = document.body;
 
-    function toggleMobileMenu() {
-        mobileMenuBtn.classList.toggle('active');
-        navLinks.classList.toggle('mobile-open');
-        body.classList.toggle('menu-open');
+    function openMobileMenu() {
+        mobileMenuBtn.classList.add('active');
+        navLinks.classList.remove('mobile-closing');
+        navLinks.classList.add('mobile-open');
+        body.classList.add('menu-open');
+        if (backdrop) backdrop.classList.add('active');
     }
 
     function closeMobileMenu() {
+        if (!navLinks.classList.contains('mobile-open')) return;
+        navLinks.classList.add('mobile-closing');
         mobileMenuBtn.classList.remove('active');
-        navLinks.classList.remove('mobile-open');
         body.classList.remove('menu-open');
+        if (backdrop) backdrop.classList.remove('active');
+
+        // Wait for close animation to finish before hiding
+        navLinks.addEventListener('animationend', function handler() {
+            navLinks.classList.remove('mobile-open', 'mobile-closing');
+            // Reset any open dropdowns
+            navLinks.querySelectorAll('li.has-dropdown.dropdown-open').forEach(item => {
+                item.classList.remove('dropdown-open');
+            });
+            navLinks.removeEventListener('animationend', handler);
+        });
+    }
+
+    function toggleMobileMenu() {
+        if (navLinks.classList.contains('mobile-open')) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
     }
 
     if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', toggleMobileMenu);
 
-        // Close menu when clicking a nav link
+        // Close menu when clicking a nav link (but not dropdown parents)
         navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', closeMobileMenu);
+            link.addEventListener('click', function() {
+                if (!this.parentElement.classList.contains('has-dropdown')) {
+                    closeMobileMenu();
+                }
+            });
         });
+
+        // Close menu when clicking backdrop
+        if (backdrop) {
+            backdrop.addEventListener('click', closeMobileMenu);
+        }
 
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
             if (navLinks.classList.contains('mobile-open') &&
                 !navLinks.contains(e.target) &&
-                !mobileMenuBtn.contains(e.target)) {
+                !mobileMenuBtn.contains(e.target) &&
+                (!backdrop || !backdrop.contains(e.target))) {
                 closeMobileMenu();
             }
         });
