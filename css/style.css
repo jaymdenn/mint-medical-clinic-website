@@ -230,6 +230,10 @@ ul {
     height: var(--header-height);
 }
 
+.logo {
+    flex-shrink: 0;
+}
+
 .logo img {
     height: 44px;
     width: auto;
@@ -5249,6 +5253,10 @@ ul {
         display: none;
     }
 
+    .nav-right .btn-primary {
+        display: none;
+    }
+
     .cart-btn {
         width: 36px;
         height: 36px;
@@ -5257,11 +5265,6 @@ ul {
     .cart-btn svg {
         width: 16px;
         height: 16px;
-    }
-
-    .nav-right .btn-primary {
-        padding: 10px 16px;
-        font-size: 13px;
     }
 }
 
