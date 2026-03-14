@@ -23,9 +23,19 @@ function getBlobStore(name) {
     }
 }
 
-// Validate admin session token (shared with admin-auth)
+// Static webhook secret for external services (set in Netlify environment variables)
+const WEBHOOK_SECRET = process.env.BLOG_WEBHOOK_SECRET || 'mint-medical-blog-2024';
+
+// Validate token - accepts either static webhook secret OR admin session token
 async function validateAdminToken(token) {
     if (!token || typeof token !== 'string') return false;
+
+    // First check if it matches the static webhook secret
+    if (token === WEBHOOK_SECRET) {
+        return true;
+    }
+
+    // Fall back to session token validation for admin dashboard
     try {
         const sessions = getBlobStore('admin-sessions');
         const session = await sessions.get(token, { type: 'json' });
