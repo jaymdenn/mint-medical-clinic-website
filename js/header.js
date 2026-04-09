@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <li style="border-top: 1px solid #eee; margin-top: 5px; padding-top: 5px;"><a href="/providers/dr-darren-stettler.html"><strong>Dr. Darren Stettler, DO</strong></a></li>
                         </ul>
                     </li>
+                    <li><a href="/locations/">Locations</a></li>
                     <li><a href="/results.html">Results</a></li>
                     <li><a href="/blog.html">Blog</a></li>
                 </ul>
