@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <li><a href="/services/womens-health.html">Women's Health</a></li>
                             <li><a href="/services/menopause-treatment.html">Menopause Treatment</a></li>
                             <li><a href="/services/peptides.html">Peptide Therapy</a></li>
-                            <li><a href="/services/stem-cell-therapy.html">Stem Cell Therapy</a></li>
+                            <!-- HIDDEN: <li><a href="/services/stem-cell-therapy.html">Stem Cell Therapy</a></li> -->
                             <li><a href="/services/telehealth-ed.html">Telehealth ED</a></li>
                         </ul>
                     </li>
