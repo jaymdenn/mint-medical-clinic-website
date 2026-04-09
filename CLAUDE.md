@@ -2,6 +2,29 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL DEPLOYMENT RULES - READ FIRST ⚠️
+
+**THIS PROJECT MUST ONLY BE DEPLOYED TO MINT MEDICAL CLINIC**
+
+- **Netlify Site ID:** `38e7c65c-9693-4bec-9e83-e2312bd923db`
+- **Netlify Project Name:** `mint-medical-clinic`
+- **Live URL:** `https://www.mintmedicalclinic.com`
+- **GitHub Repo:** `https://github.com/Emerald-Beacon/mint-medical-clinic-website.git`
+
+### BEFORE ANY DEPLOYMENT:
+1. **ALWAYS** run `netlify status` first to verify the linked site
+2. **VERIFY** the Project Id is `38e7c65c-9693-4bec-9e83-e2312bd923db`
+3. **VERIFY** the Project URL is `https://www.mintmedicalclinic.com`
+4. **NEVER** deploy if the site name shows anything other than `mint-medical-clinic`
+5. If linked to wrong site, run: `netlify unlink && netlify link --id 38e7c65c-9693-4bec-9e83-e2312bd923db`
+
+### BEFORE ANY GIT COMMIT:
+1. **ALWAYS** verify the remote is `https://github.com/Emerald-Beacon/mint-medical-clinic-website.git`
+2. Run `git remote -v` to confirm before pushing
+3. **NEVER** push to any other repository
+
+---
+
 ## Project Overview
 
 Mint Medical Clinic is a static HTML website for a Utah-based intimacy health and wellness clinic. The site uses Netlify for hosting with serverless functions for blog management and admin authentication.

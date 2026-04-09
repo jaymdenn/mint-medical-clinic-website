@@ -1,3 +1,13 @@
+# ============================================
+# MINT MEDICAL CLINIC - NETLIFY CONFIGURATION
+# ============================================
+# Site ID: 38e7c65c-9693-4bec-9e83-e2312bd923db
+# Site Name: mint-medical-clinic
+# Live URL: https://www.mintmedicalclinic.com
+#
+# WARNING: DO NOT DEPLOY THIS TO ANY OTHER SITE
+# ============================================
+
 [build]
   publish = "."
   functions = "netlify/functions"
