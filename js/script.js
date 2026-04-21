@@ -1,6 +1,274 @@
 // Mint Medical Clinic - Main JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
+    // ===== Sitewide SEO/GEO Schema and Metadata =====
+    (function applySitewideSeoAndGeo() {
+        const SITE_URL = 'https://mintmedicalclinic.com';
+        const PAGE_URL = window.location.href.split('#')[0];
+        const PATHNAME = window.location.pathname || '/';
+        const TITLE = (document.querySelector('title')?.textContent || 'Mint Medical Clinic').trim();
+        const DESCRIPTION = (
+            document.querySelector('meta[name="description"]')?.getAttribute('content')
+            || 'Mint Medical Clinic provides intimacy health, hormone therapy, and medical wellness services in Utah.'
+        ).trim();
+
+        const toAbsoluteUrl = (url) => {
+            if (!url) return '';
+            try {
+                return new URL(url, SITE_URL).href;
+            } catch (error) {
+                return '';
+            }
+        };
+
+        const ensureMeta = (selector, attrs) => {
+            let el = document.querySelector(selector);
+            if (!el) {
+                el = document.createElement('meta');
+                Object.entries(attrs).forEach(([key, value]) => {
+                    if (key !== 'content') {
+                        el.setAttribute(key, value);
+                    }
+                });
+                document.head.appendChild(el);
+            }
+            if (attrs.content) {
+                el.setAttribute('content', attrs.content);
+            }
+        };
+
+        const ensureCanonical = () => {
+            let canonical = document.querySelector('link[rel="canonical"]');
+            if (!canonical) {
+                canonical = document.createElement('link');
+                canonical.setAttribute('rel', 'canonical');
+                document.head.appendChild(canonical);
+            }
+            canonical.setAttribute('href', PAGE_URL);
+        };
+
+        ensureCanonical();
+        ensureMeta('meta[name="robots"]', { name: 'robots', content: 'index, follow, max-image-preview:large' });
+        ensureMeta('meta[property="og:locale"]', { property: 'og:locale', content: 'en_US' });
+        ensureMeta('meta[property="og:site_name"]', { property: 'og:site_name', content: 'Mint Medical Clinic' });
+        ensureMeta('meta[property="og:type"]', { property: 'og:type', content: PATHNAME.startsWith('/blog/') ? 'article' : 'website' });
+        ensureMeta('meta[property="og:url"]', { property: 'og:url', content: PAGE_URL });
+        ensureMeta('meta[property="og:title"]', { property: 'og:title', content: TITLE });
+        ensureMeta('meta[property="og:description"]', { property: 'og:description', content: DESCRIPTION });
+        ensureMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' });
+        ensureMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: TITLE });
+        ensureMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: DESCRIPTION });
+        ensureMeta('meta[name="geo.region"]', { name: 'geo.region', content: 'US-UT' });
+        ensureMeta('meta[name="geo.placename"]', { name: 'geo.placename', content: 'Sandy and Layton, Utah' });
+
+        const getImageObjects = () => {
+            const images = Array.from(document.querySelectorAll('img[src]'))
+                .map((img, index) => {
+                    const src = toAbsoluteUrl(img.getAttribute('src'));
+                    if (!src) return null;
+                    const caption = (img.getAttribute('alt') || img.getAttribute('title') || '').trim();
+                    return {
+                        '@type': 'ImageObject',
+                        '@id': `${PAGE_URL}#image-${index + 1}`,
+                        contentUrl: src,
+                        url: src,
+                        caption: caption || undefined,
+                        representativeOfPage: index === 0
+                    };
+                })
+                .filter(Boolean);
+            return images;
+        };
+
+        const getVideoObjects = () => {
+            const videos = [];
+            const iframeSelectors = 'iframe[src*="youtube.com"], iframe[src*="youtu.be"], iframe[src*="vimeo.com"]';
+            const iframes = Array.from(document.querySelectorAll(iframeSelectors));
+            iframes.forEach((iframe, index) => {
+                const src = toAbsoluteUrl(iframe.getAttribute('src'));
+                if (!src) return;
+                const name = (iframe.getAttribute('title') || `Mint Medical Clinic Video ${index + 1}`).trim();
+                videos.push({
+                    '@type': 'VideoObject',
+                    '@id': `${PAGE_URL}#video-${index + 1}`,
+                    name,
+                    description: DESCRIPTION,
+                    embedUrl: src,
+                    contentUrl: src,
+                    isPartOf: { '@id': `${PAGE_URL}#webpage` }
+                });
+            });
+            return videos;
+        };
+
+        const getFaqSchema = () => {
+            const faqItems = Array.from(document.querySelectorAll('.faq-item')).map((item) => {
+                const question = item.querySelector('h2, h3, h4, strong');
+                const answer = item.querySelector('p, div');
+                const qText = (question?.textContent || '').trim();
+                const aText = (answer?.textContent || '').trim();
+                if (!qText || !aText) return null;
+                return {
+                    '@type': 'Question',
+                    name: qText,
+                    acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: aText
+                    }
+                };
+            }).filter(Boolean);
+
+            if (!faqItems.length) {
+                return null;
+            }
+
+            return {
+                '@type': 'FAQPage',
+                '@id': `${PAGE_URL}#faq`,
+                mainEntity: faqItems
+            };
+        };
+
+        const websiteSchema = {
+            '@type': 'WebSite',
+            '@id': `${SITE_URL}/#website`,
+            url: SITE_URL,
+            name: 'Mint Medical Clinic',
+            inLanguage: 'en-US'
+        };
+
+        const organizationSchema = {
+            '@type': 'MedicalBusiness',
+            '@id': `${SITE_URL}/#organization`,
+            name: 'Mint Medical Clinic',
+            url: SITE_URL,
+            telephone: '+1-801-804-8000',
+            email: 'info@mintmedicalclinic.com',
+            priceRange: '$$',
+            areaServed: {
+                '@type': 'State',
+                name: 'Utah'
+            },
+            makesOffer: [
+                { '@type': 'Offer', itemOffered: { '@type': 'MedicalProcedure', name: 'ED Treatment' } },
+                { '@type': 'Offer', itemOffered: { '@type': 'MedicalProcedure', name: 'Hormone Replacement Therapy' } },
+                { '@type': 'Offer', itemOffered: { '@type': 'MedicalProcedure', name: 'Medical Weight Loss' } }
+            ]
+        };
+
+        const sandyLocationSchema = {
+            '@type': 'MedicalClinic',
+            '@id': `${SITE_URL}/#sandy-location`,
+            name: 'Mint Medical Clinic - Sandy',
+            url: `${SITE_URL}/`,
+            telephone: '+1-801-804-8000',
+            parentOrganization: { '@id': `${SITE_URL}/#organization` },
+            address: {
+                '@type': 'PostalAddress',
+                streetAddress: '10011 S. Centennial Pkwy, Suite 350',
+                addressLocality: 'Sandy',
+                addressRegion: 'UT',
+                postalCode: '84070',
+                addressCountry: 'US'
+            },
+            geo: {
+                '@type': 'GeoCoordinates',
+                latitude: 40.5649,
+                longitude: -111.8389
+            },
+            openingHoursSpecification: [
+                {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                    opens: '09:00',
+                    closes: '17:00'
+                },
+                {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: 'Saturday',
+                    opens: '09:00',
+                    closes: '17:00'
+                }
+            ]
+        };
+
+        const laytonLocationSchema = {
+            '@type': 'MedicalClinic',
+            '@id': `${SITE_URL}/#layton-location`,
+            name: 'Mint Medical Clinic - Layton',
+            url: `${SITE_URL}/`,
+            telephone: '+1-801-804-8000',
+            parentOrganization: { '@id': `${SITE_URL}/#organization` },
+            address: {
+                '@type': 'PostalAddress',
+                streetAddress: '836 S Main St',
+                addressLocality: 'Layton',
+                addressRegion: 'UT',
+                postalCode: '84041',
+                addressCountry: 'US'
+            },
+            geo: {
+                '@type': 'GeoCoordinates',
+                latitude: 41.0602,
+                longitude: -111.9711
+            },
+            openingHoursSpecification: [
+                {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                    opens: '09:00',
+                    closes: '17:00'
+                },
+                {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: 'Saturday',
+                    opens: '09:00',
+                    closes: '17:00'
+                }
+            ]
+        };
+
+        const webpageSchema = {
+            '@type': 'WebPage',
+            '@id': `${PAGE_URL}#webpage`,
+            url: PAGE_URL,
+            name: TITLE,
+            description: DESCRIPTION,
+            isPartOf: { '@id': `${SITE_URL}/#website` },
+            about: { '@id': `${SITE_URL}/#organization` },
+            primaryImageOfPage: getImageObjects()[0] ? { '@id': `${PAGE_URL}#image-1` } : undefined,
+            inLanguage: 'en-US'
+        };
+
+        const graph = [
+            websiteSchema,
+            organizationSchema,
+            sandyLocationSchema,
+            laytonLocationSchema,
+            webpageSchema,
+            ...getImageObjects(),
+            ...getVideoObjects()
+        ];
+
+        const faqSchema = getFaqSchema();
+        if (faqSchema) {
+            graph.push(faqSchema);
+        }
+
+        const schemaScriptId = 'sitewide-schema';
+        let schemaScript = document.getElementById(schemaScriptId);
+        if (!schemaScript) {
+            schemaScript = document.createElement('script');
+            schemaScript.type = 'application/ld+json';
+            schemaScript.id = schemaScriptId;
+            document.head.appendChild(schemaScript);
+        }
+        schemaScript.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': graph
+        });
+    })();
+
 
     // ===== Secret Admin Access (7 clicks on logo) =====
     const logo = document.querySelector('.logo');

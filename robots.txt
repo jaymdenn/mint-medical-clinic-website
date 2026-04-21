@@ -1,58 +1,43 @@
 # Mint Medical Clinic - Robots.txt
 # https://mintmedicalclinic.com/robots.txt
+# Last Updated: 2026-04-08
 
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /.netlify/
+Disallow: /api/
 
-# Sitemap location
+# Primary sitemap and AI-discovery file
 Sitemap: https://mintmedicalclinic.com/sitemap.xml
 
-# LLMs.txt for AI crawlers
-# https://mintmedicalclinic.com/llms.txt
-
-# Disallow admin/internal paths (if any exist in future)
-Disallow: /.netlify/
-
-# Allow all major search engines
+# Explicitly allow modern search/AI crawlers
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
-User-agent: Slurp
+User-agent: Applebot
 Allow: /
 
-User-agent: DuckDuckBot
-Allow: /
-
-User-agent: Baiduspider
-Allow: /
-
-User-agent: YandexBot
-Allow: /
-
-# Allow AI/LLM crawlers
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: Claude-Web
+User-agent: OAI-SearchBot
 Allow: /
 
-User-agent: Anthropic-AI
-Allow: /
-
-User-agent: Google-Extended
+User-agent: ClaudeBot
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /
 
-User-agent: Bytespider
+User-agent: Google-Extended
 Allow: /
 
-# Crawl-delay for politeness (optional)
-Crawl-delay: 1
+User-agent: CCBot
+Allow: /

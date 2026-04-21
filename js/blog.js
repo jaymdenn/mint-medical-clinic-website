@@ -130,6 +130,7 @@
         const articlesToShow = filteredArticles.slice(startIndex, endIndex);
 
         blogGrid.innerHTML = articlesToShow.map(article => createArticleCard(article)).join('');
+        updateBlogListingSchema(articlesToShow);
 
         // Show/hide load more button
         if (endIndex < filteredArticles.length) {
@@ -142,6 +143,47 @@
         } else {
             loadMoreContainer.style.display = 'none';
         }
+    }
+
+    function updateBlogListingSchema(articles) {
+        const blogSchemaId = 'blog-list-schema';
+        let schemaScript = document.getElementById(blogSchemaId);
+        if (!schemaScript) {
+            schemaScript = document.createElement('script');
+            schemaScript.type = 'application/ld+json';
+            schemaScript.id = blogSchemaId;
+            document.head.appendChild(schemaScript);
+        }
+
+        const itemListElement = articles.map((article, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: `https://mintmedicalclinic.com/blog/${encodeURIComponent(article.slug)}`,
+            name: article.title
+        }));
+
+        const graph = [
+            {
+                '@type': 'CollectionPage',
+                '@id': 'https://mintmedicalclinic.com/blog.html#webpage',
+                url: 'https://mintmedicalclinic.com/blog.html',
+                name: 'Mint Medical Clinic Blog',
+                description: 'Health and wellness blog articles from Mint Medical Clinic.',
+                isPartOf: { '@id': 'https://mintmedicalclinic.com/#website' }
+            },
+            {
+                '@type': 'ItemList',
+                '@id': 'https://mintmedicalclinic.com/blog.html#itemlist',
+                itemListOrder: 'https://schema.org/ItemListOrderDescending',
+                numberOfItems: itemListElement.length,
+                itemListElement
+            }
+        ];
+
+        schemaScript.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': graph
+        });
     }
 
     function createArticleCard(article) {
@@ -342,33 +384,82 @@
     }
 
     function updateSchema(article) {
-        const schema = {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": article.title,
-            "description": article.excerpt,
-            "image": article.featuredImage || "https://mintmedicalclinic.com/images/og-image.jpg",
-            "datePublished": article.publishedAt,
-            "dateModified": article.updatedAt || article.publishedAt,
-            "author": {
-                "@type": "Person",
-                "name": article.author || "Mint Medical Team"
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "Mint Medical Clinic",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://mintmedicalclinic.com/images/mint-medical-logo.png"
+        const articleUrl = window.location.href;
+        const imageUrl = article.featuredImage || 'https://mintmedicalclinic.com/images/og-image.jpg';
+        const articleBody = document.getElementById('articleBody');
+        const faqCandidates = Array.from(articleBody.querySelectorAll('h2, h3'))
+            .filter((el) => el.textContent.trim().endsWith('?'))
+            .slice(0, 8);
+
+        const faqEntities = faqCandidates.map((questionEl) => {
+            let answerEl = questionEl.nextElementSibling;
+            while (answerEl && answerEl.tagName !== 'P') {
+                answerEl = answerEl.nextElementSibling;
+            }
+            if (!answerEl) return null;
+            const q = questionEl.textContent.trim();
+            const a = answerEl.textContent.trim();
+            if (!q || !a) return null;
+            return {
+                '@type': 'Question',
+                name: q,
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: a
+                }
+            };
+        }).filter(Boolean);
+
+        const graph = [
+            {
+                '@type': 'BlogPosting',
+                '@id': `${articleUrl}#article`,
+                headline: article.title,
+                description: article.excerpt,
+                image: [imageUrl],
+                datePublished: article.publishedAt,
+                dateModified: article.updatedAt || article.publishedAt,
+                author: {
+                    '@type': 'Person',
+                    name: article.author || 'Mint Medical Team'
+                },
+                publisher: {
+                    '@type': 'MedicalBusiness',
+                    '@id': 'https://mintmedicalclinic.com/#organization',
+                    name: 'Mint Medical Clinic',
+                    logo: {
+                        '@type': 'ImageObject',
+                        url: 'https://mintmedicalclinic.com/images/mint-medical-logo.png'
+                    }
+                },
+                mainEntityOfPage: {
+                    '@type': 'WebPage',
+                    '@id': `${articleUrl}#webpage`
                 }
             },
-            "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": window.location.href
+            {
+                '@type': 'WebPage',
+                '@id': `${articleUrl}#webpage`,
+                url: articleUrl,
+                name: article.title,
+                description: article.excerpt,
+                isPartOf: { '@id': 'https://mintmedicalclinic.com/#website' },
+                about: { '@id': 'https://mintmedicalclinic.com/#organization' }
             }
-        };
+        ];
 
-        document.getElementById('article-schema').textContent = JSON.stringify(schema);
+        if (faqEntities.length) {
+            graph.push({
+                '@type': 'FAQPage',
+                '@id': `${articleUrl}#faq`,
+                mainEntity: faqEntities
+            });
+        }
+
+        document.getElementById('article-schema').textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': graph
+        });
     }
 
     function showArticleError(message) {

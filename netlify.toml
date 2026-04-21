@@ -1,13 +1,3 @@
-# ============================================
-# MINT MEDICAL CLINIC - NETLIFY CONFIGURATION
-# ============================================
-# Site ID: 38e7c65c-9693-4bec-9e83-e2312bd923db
-# Site Name: mint-medical-clinic
-# Live URL: https://www.mintmedicalclinic.com
-#
-# WARNING: DO NOT DEPLOY THIS TO ANY OTHER SITE
-# ============================================
-
 [build]
   publish = "."
   functions = "netlify/functions"
@@ -31,17 +21,6 @@
 [[redirects]]
   from = "/blog/:slug"
   to = "/blog/article.html?slug=:slug"
-  status = 200
-
-# Location pages - clean URLs
-[[redirects]]
-  from = "/locations/"
-  to = "/locations/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/locations/:city/"
-  to = "/locations/:city.html"
   status = 200
 
 # Headers for security and caching
@@ -72,3 +51,14 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
