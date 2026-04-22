@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </li>
                     <li><a href="/results.html">Results</a></li>
                     <li><a href="/blog.html">Blog</a></li>
+                    <li class="mobile-contact"><a href="tel:8018048000"><svg class="mobile-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(801) 804-8000</a></li>
                 </ul>
                 <div class="nav-right">
                     <a href="tel:8018048000" class="phone">(801) 804-8000</a>
@@ -72,24 +73,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </nav>
         </div>
+        <div class="mobile-menu-backdrop"></div>
     `;
 
     // Re-initialize mobile menu after header injection
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const navLinks = document.querySelector('.nav-links');
+    const backdrop = document.querySelector('.mobile-menu-backdrop');
     const body = document.body;
 
-    function toggleMobileMenu() {
-        mobileMenuBtn.classList.toggle('active');
-        navLinks.classList.toggle('mobile-open');
-        body.classList.toggle('menu-open');
+    function openMobileMenu() {
+        mobileMenuBtn.classList.add('active');
+        navLinks.classList.remove('mobile-closing');
+        navLinks.classList.add('mobile-open');
+        body.classList.add('menu-open');
+        if (backdrop) backdrop.classList.add('active');
     }
 
     function closeMobileMenu() {
+        if (!navLinks.classList.contains('mobile-open')) return;
+        navLinks.classList.add('mobile-closing');
         mobileMenuBtn.classList.remove('active');
-        navLinks.classList.remove('mobile-open');
         body.classList.remove('menu-open');
+        if (backdrop) backdrop.classList.remove('active');
+
+        navLinks.addEventListener('animationend', function handler() {
+            navLinks.classList.remove('mobile-open', 'mobile-closing');
+            dropdowns.forEach((dropdown) => {
+                dropdown.classList.remove('dropdown-open');
+            });
+            navLinks.removeEventListener('animationend', handler);
+        });
     }
+
+    function toggleMobileMenu() {
+        if (navLinks.classList.contains('mobile-open')) {
+            closeMobileMenu();
+            return;
+        }
+        openMobileMenu();
+    }
+
+    const dropdowns = document.querySelectorAll('.has-dropdown');
 
     if (mobileMenuBtn && navLinks) {
         mobileMenuBtn.addEventListener('click', function(e) {
@@ -109,11 +134,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
+        if (backdrop) {
+            backdrop.addEventListener('click', closeMobileMenu);
+        }
+
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
             if (navLinks.classList.contains('mobile-open') &&
                 !navLinks.contains(e.target) &&
-                !mobileMenuBtn.contains(e.target)) {
+                !mobileMenuBtn.contains(e.target) &&
+                (!backdrop || !backdrop.contains(e.target))) {
                 closeMobileMenu();
             }
         });
@@ -127,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle dropdowns on mobile
-    const dropdowns = document.querySelectorAll('.has-dropdown');
     dropdowns.forEach(dropdown => {
         const link = dropdown.querySelector('a');
         link.addEventListener('click', function(e) {
